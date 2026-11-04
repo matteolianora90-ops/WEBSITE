@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quizian – Review Together. Compete. Level Up.</title>
+  <meta name="description" content="Quizian is an interactive learning platform that makes reviewing fun with quiz formats, timed group challenges, points and leaderboards." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="progress" id="progress"></div>
+  <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <!-- ============ NAVBAR ============ -->
+  <header class="nav" id="nav">
+    <div class="container nav__inner">
+      <a href="#home" class="brand" aria-label="Quizian home">
+        <img class="brand__logo" src="download.jfif" alt="" width="42" height="42" />
+        <span>Quizian</span>
+      </a>
+
+      <nav class="nav__links" id="navLinks" aria-label="Main">
+        <a href="#home" class="active">Home</a>
+        <a href="#about">About Us</a>
+        <a href="#products">Products</a>
+        <a href="#how">How it Works</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <div class="nav__actions">
+        <a href="#cta" class="btn btn--primary btn--sm">Get Started</a>
+        <button class="burger" id="burger" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============ 1. HOME ============ -->
+    <section class="hero" id="home">
+      <div class="hero__grid"></div>
+      <div class="hero__glow"></div>
+      <span class="floaty f1" aria-hidden="true"  >🪙</span>
+      <span class="floaty f2" aria-hidden="true">🔥</span>
+      <span class="floaty f3" aria-hidden="true">🏆</span>
+      <span class="floaty f4" aria-hidden="true">⚡</span>
+      <span class="floaty f5" aria-hidden="true">📚</span>
+
+      <div class="container hero__inner">
+        <div class="hero__text">
+          <span class="pill"><i></i> Inspiring Change, Creating Futures</span>
+          <h1>
+            <span class="accent">R</span>eview together.<br />
+            Compete, earn coins,<br />
+            <em>level up.</em>
+          </h1>
+          <p class="lead">
+            Quizian turns boring solo reviewing into a fun game with your friends and classmates.
+            Quizzes, timed challenges, points and leaderboards — all in one platform.
+          </p>
+          <div class="hero__cta">
+            <a href="#cta" class="btn btn--primary">Start Reviewing</a>
+            <a href="#products" class="btn btn--ghost">See Features</a>
+          </div>
+          <ul class="hero__stats">
+            <li><strong data-count="4">0</strong><span>Quiz formats</span></li>
+            <li><strong data-count="4">0</strong><span>players max per challenge</span></li>
+            <li><strong data-count="100" data-suffix="%">0</strong><span>free to start</span></li>
+          </ul>
+        </div>
+
+        <!-- device mockups -->
+        <div class="devices" aria-hidden="true">
+          <div class="tablet">
+            <div class="tablet__bar">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              <b>Quizian</b>
+            </div>
+            <div class="tablet__body">
+              <div class="t-banner">
+                <div>
+                  <small>Hi, Matt!</small>
+                  <h4>Ready to review?</h4>
+                </div>
+                <div class="t-btns"><span>Quick Play</span><span class="dark">Create</span></div>
+              </div>
+              <div class="t-stats">
+                <div><b>🪙 120</b><small>Coins</small></div>
+                <div><b>🔥 7</b><small>Day Streak</small></div>
+                <div><b>✔ 24</b><small>Quizzes Done</small></div>
+              </div>
+              <div class="t-types">
+                <span>Multiple Choice</span>
+                <span>Fill in the Blank</span>
+                <span>Identification</span>
+                <span>Scrambled Words</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="phone">
+            <div class="phone__notch"></div>
+            <div class="phone__screen">
+              <h5>🏆 Weekly Leaderboard</h5>
+              <ul>
+                <li><span>1</span> Matteo <b>🪙 100</b></li>
+                <li><span>2</span> Steve <b>🪙 50</b></li>
+                <li><span>3</span> Jasem <b>🪙 40</b></li>
+              </ul>
+              <div class="phone__code">
+                <small>JOIN CODE</small>
+                <strong>1QP20</strong>
+              </div>
+              <div class="phone__btn">Start Game Now</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- quiz type strip -->
+      <div class="container">
+        <div class="strip">
+          <div class="strip__item"><span>☑</span>Multiple Choice</div>
+          <div class="strip__item"><span>✎</span>Fill in the Blank</div>
+          <div class="strip__item"><span>🔍</span>Identification</div>
+          <div class="strip__item"><span>🔀</span>Scrambled Words</div>
+          <div class="strip__item"><span>⏱</span>Timed Group Quiz</div>
+          <div class="strip__item"><span>🏆</span>Leaderboard</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- vibe marquee -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track">
+        <span>🔥 Keep your streak</span><span>🏆 Top the leaderboard</span><span>🪙 Earn coins</span><span>⚡ Beat the timer</span><span>🤝 Review with friends</span><span>🎮 Make studying a game</span>
+        <span>🔥 Keep your streak</span><span>🏆 Top the leaderboard</span><span>🪙 Earn coins</span><span>⚡ Beat the timer</span><span>🤝 Review with friends</span><span>🎮 Make studying a game</span>
+      </div>
+    </div>
+
+    <!-- ============ 2. ABOUT US ============ -->
+    <section class="section section--light" id="about">
+      <div class="container">
+        <div class="section__head reveal">
+          <span class="eyebrow">About Us</span>
+          <h2>Studying is better <em>together.</em></h2>
+          <p>Quizian started from a simple observation: studying alone is boring, and boring means forgotten.</p>
+        </div>
+
+        <div class="about__grid">
+          <article class="card reveal">
+            <div class="card__icon">📖</div>
+            <h3>Our Background</h3>
+            <p>
+              Many students lose interest and motivation when reviewing means reading notes alone.
+              They procrastinate, forget lessons, and feel underprepared right before a quiz or exam.
+              Students told us they study better with someone else — so we built a place for that.
+            </p>
+          </article>
+          <article class="card reveal">
+            <div class="card__icon">🎯</div>
+            <h3>Our Mission</h3>
+            <p>
+              To make reviewing more fun, active and collaborative, helping students stay motivated,
+              remember lessons more easily, and feel prepared for every quiz and examination.
+            </p>
+          </article>
+          <article class="card reveal">
+            <div class="card__icon">🌟</div>
+            <h3>Our Vision</h3>
+            <p>
+              A future where every student looks forward to reviewing — learning, competing and
+              growing together through participatory learning.
+            </p>
+          </article>
+        </div>
+
+        <h3 class="subhead reveal">Meet the Team</h3>
+        <div class="team">
+          <div class="member reveal">
+            <div class="avatar">JM</div>
+            <h4>Jasem Madidis</h4>
+            <span>Project Manager</span>
+            <p>Oversees the project, manages the timeline and coordinates the team.</p>
+          </div>
+          <div class="member reveal">
+            <div class="avatar">SP</div>
+            <h4>Steve Owein Presidente</h4>
+            <span>System Analyst</span>
+            <p>Analyzes user needs, defines requirements and designs the system workflow.</p>
+          </div>
+          <div class="member reveal">
+            <div class="avatar">ML</div>
+            <h4>Matteo Lianora</h4>
+            <span>Programmer</span>
+            <p>Develops the platform, implements features and handles testing and debugging.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 3. PRODUCTS / SERVICES ============ -->
+    <section class="section section--dark" id="products">
+      <div class="container">
+        <div class="section__head reveal">
+          <span class="eyebrow">Products &amp; Services</span>
+          <h2>Everything you need to <em>review smarter.</em></h2>
+          <p>Four quiz formats, group challenges, and rewards that keep you coming back.</p>
+        </div>
+
+        <div class="features">
+          <article class="feature reveal">
+            <span class="feature__icon">☑</span>
+            <h3>Multiple Choice</h3>
+            <p>Pick the correct option from a list of answers.</p>
+          </article>
+          <article class="feature reveal">
+            <span class="feature__icon">✎</span>
+            <h3>Fill in the Blanks</h3>
+            <p>Recall the missing word or information from your lesson.</p>
+          </article>
+          <article class="feature reveal">
+            <span class="feature__icon">🔍</span>
+            <h3>Identification</h3>
+            <p>Identify the correct term, concept or answer.</p>
+          </article>
+          <article class="feature reveal">
+            <span class="feature__icon">🔀</span>
+            <h3>Scrambled Words</h3>
+            <p>Unscramble words related to your lessons.</p>
+          </article>
+          <article class="feature feature--wide reveal">
+            <span class="feature__icon">⏱</span>
+            <h3>Timed Group Quizzes</h3>
+            <p>Challenge up to 4 friends with the same questions inside a time limit. Share a join code and start the game.</p>
+          </article>
+          <article class="feature feature--wide reveal">
+            <span class="feature__icon">🏆</span>
+            <h3>Points &amp; Leaderboard</h3>
+            <p>Earn coins and XP for every correct answer and climb the weekly ranking for friendly competition.</p>
+          </article>
+        </div>
+
+        <!-- interactive demo -->
+        <div class="demo reveal">
+          <div class="demo__info">
+            <span class="eyebrow">Try it</span>
+            <h3>Quick Play demo</h3>
+            <p>Answer a sample question to see how Quizian rewards you.</p>
+            <div class="demo__score">🪙 Coins: <b id="demoCoins">0</b></div>
+          </div>
+          <div class="demo__box" id="demoBox">
+            <div class="demo__q" id="demoQ"></div>
+            <div class="demo__opts" id="demoOpts"></div>
+            <div class="demo__msg" id="demoMsg" aria-live="polite"></div>
+            <button class="btn btn--primary btn--sm" id="demoNext" hidden>Next question →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HOW IT WORKS ============ -->
+    <section class="section section--light" id="how">
+      <div class="container">
+        <div class="section__head reveal">
+          <span class="eyebrow">How it Works</span>
+          <h2>From notes to <em>game night</em> in 3 steps.</h2>
+        </div>
+        <div class="steps">
+          <div class="step reveal"><b>1</b><h3>Upload &amp; Create</h3><p>Drop your study file, choose the number of questions, difficulty and quiz types, then generate.</p></div>
+          <div class="step reveal"><b>2</b><h3>Challenge a Friend</h3><p>Pick a quiz, set the time limit and share your join code with classmates.</p></div>
+          <div class="step reveal"><b>3</b><h3>Compete &amp; Level Up</h3><p>Earn coins, keep your streak alive and rise on the leaderboard.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 4. CALL TO ACTION ============ -->
+    <section class="cta" id="cta">
+      <div class="container">
+        <div class="cta__box reveal">
+          <div class="cta__glow"></div>
+          <h2>Ready to make reviewing fun?</h2>
+          <p>Join Quizian for free and turn your next study session into a challenge.</p>
+          <div class="cta__btns">
+            <a href="#contact" class="btn btn--light">Join Now</a>
+            <a href="#products" class="btn btn--outline">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 6 & 7. CONTACT + FORM ============ -->
+    <section class="section section--dark" id="contact">
+      <div class="container">
+        <div class="section__head reveal">
+          <span class="eyebrow">Contact Us</span>
+          <h2>Got questions? <em>Let's talk.</em></h2>
+          <p>Send us an inquiry or feedback and we'll get back to you.</p>
+        </div>
+
+        <div class="contact">
+          <div class="contact__info reveal">
+            <h3>Contact Information</h3>
+            <ul>
+              <li><span>📍</span><div><b>Address</b><br />Institute of Computing, Davao del Norte State College, Panabo City</div></li>
+              <li><span>✉️</span><div><b>Email</b><br /><a href="mailto:matteollanora@gmail.com">matteollanora@gmail.com</a></div></li>
+              <li><span>📞</span><div><b>Phone</b><br />+63 0930 184 5093</div></li>
+              <li><span>🌐</span><div><b>Social</b><br />Facebook · Instagram · TikTok <small>(@quizian)</small></div></li>
+              <li><span>🕘</span><div><b>Hours</b><br />Mon – Fri, 8:00 AM – 5:00 PM</div></li>
+            </ul>
+          </div>
+
+          <form class="form reveal" id="contactForm" novalidate>
+            <h3>Send us a message</h3>
+
+            <div class="field">
+              <label for="name">Full name</label>
+              <input type="text" id="name" name="name" placeholder="Juan Dela Cruz" required />
+              <small class="error" data-for="name"></small>
+            </div>
+
+            <div class="field">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" placeholder="you@email.com" required />
+              <small class="error" data-for="email"></small>
+            </div>
+
+            <div class="field">
+              <label for="type">I am a…</label>
+              <select id="type" name="type" required>
+                <option value="">Select one</option>
+                <option>High school student</option>
+                <option>Senior high school student</option>
+                <option>College student</option>
+                <option>Teacher / School representative</option>
+              </select>
+              <small class="error" data-for="type"></small>
+            </div>
+
+            <div class="field">
+              <label for="topic">Topic</label>
+              <select id="topic" name="topic">
+                <option>General inquiry</option>
+                <option>Feedback</option>
+                <option>School partnership</option>
+                <option>Report a problem</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" rows="4" placeholder="Tell us what you think…" required></textarea>
+              <small class="error" data-for="message"></small>
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--block">Submit</button>
+            <p class="form__ok" id="formOk" role="status" hidden>✅ Thank you! Your message has been submitted.</p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a href="#home" class="brand">
+          <img class="brand__logo" src="download.jfif" alt="" width="42" height="42" />
+          <span>Quizian</span>
+        </a>
+        <p>Review together. Compete, earn coins, level up.</p>
+      </div>
+      <nav class="footer__links" aria-label="Footer">
+        <a href="#home">Home</a><a href="#about">About</a><a href="#products">Products</a><a href="#contact">Contact</a>
+      </nav>
+      <p class="footer__copy">© <span id="year"></span> Quizian · Institute of Computing, DNSC</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
