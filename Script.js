@@ -79,54 +79,306 @@
   );
   $$("[data-count]").forEach(el => countObs.observe(el));
 
-  /* ---------- Quick Play demo ---------- */
-  const questions = [
-    { q: "Which part of a plant absorbs sunlight for photosynthesis?", o: ["Roots", "Chlorophyll", "Stem", "Petals"], a: 1 },
-    { q: "What does HTML stand for?", o: ["HyperText Markup Language", "High Tech Modern Language", "HyperTransfer Mail Link", "Home Tool Markup Language"], a: 0 },
-    { q: "Which planet is known as the Red Planet?", o: ["Venus", "Jupiter", "Mars", "Mercury"], a: 2 },
-    { q: "Unscramble: T-O-A-M", o: ["MOAT", "ATOM", "TOMA", "MATO"], a: 1 }
-  ];
-  let qi = 0, coins = 0;
-  const elQ = $("#demoQ"), elO = $("#demoOpts"), elM = $("#demoMsg"), elN = $("#demoNext"), elC = $("#demoCoins");
+  /* =====================================================
+     QUICK PLAY DEMO
+     How it works:
+     1. The 4 questions are already written in index.html.
+     2. showQuestion() shows one question and hides the others.
+     3. When the player answers, we check it with if / else,
+        give 10 coins if it is correct, and show feedback.
+     4. The Next button moves to the next question.
+     5. After question 4, showResults() shows the final score.
+     ===================================================== */
 
-  function loadQ() {
-    const item = questions[qi];
-    elQ.textContent = item.q;
-    elO.innerHTML = "";
-    elM.textContent = "";
-    elN.hidden = true;
-    item.o.forEach((text, i) => {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.textContent = text;
-      b.addEventListener("click", () => answer(i));
-      elO.appendChild(b);
+  // ----- Settings and variables -----
+  var totalQuestions = 4;
+  var coinsPerCorrectAnswer = 10;
+
+  var currentQuestion = 0;   // 0 = first question, 1 = second, 2 = third, 3 = fourth
+  var coins = 0;             // total coins earned
+  var score = 0;             // number of correct answers
+
+  // One true/false for each question. It stops a question from being answered twice.
+  var alreadyAnswered = [false, false, false, false];
+
+  // The name of each question type (shown above the progress bar)
+  var questionTypes = ["Multiple Choice", "Fill in the Blanks", "Identification", "Scramble Words"];
+
+  // The correct answer for each question (shown when the player is wrong)
+  var correctAnswerText = ["B. Chlorophyll", "100", "Nucleus", "PLANT"];
+
+  // A short explanation for each question
+  var explanations = [
+    "Chlorophyll is the green pigment in leaves that captures sunlight so the plant can make its food.",
+    "At sea level, water reaches its boiling point at 100 degrees Celsius.",
+    "The nucleus holds the protons and neutrons, which make up almost all of an atom's mass.",
+    "T-N-A-L-P rearranged spells PLANT."
+  ];
+
+  // ----- Find the HTML elements we need -----
+  var questionNumberText = document.getElementById("questionNumber");
+  var questionTypeText = document.getElementById("questionType");
+  var progressFill = document.getElementById("progressFill");
+  var coinsDisplay = document.getElementById("coinsDisplay");
+  var resultsBox = document.getElementById("results");
+
+  var questionBoxes = document.querySelectorAll(".question");      // the 4 question boxes
+  var optionButtons = document.querySelectorAll(".demo__opt");     // the A, B, C, D buttons
+  var answerForms = document.querySelectorAll(".demo__form");      // the forms for questions 2, 3, 4
+  var nextButtons = document.querySelectorAll(".demo__next");      // the 4 Next buttons
+
+  // ----- Show only the current question -----
+  function showQuestion() {
+    // Hide all four question boxes
+    for (var i = 0; i < questionBoxes.length; i++) {
+      questionBoxes[i].hidden = true;
+    }
+
+    // Show only the current one
+    questionBoxes[currentQuestion].hidden = false;
+
+    // Update the text above the progress bar
+    questionNumberText.textContent = "Question " + (currentQuestion + 1) + " of " + totalQuestions;
+    questionTypeText.textContent = questionTypes[currentQuestion];
+
+    updateProgressBar();
+  }
+
+  // ----- Fill the progress bar based on how many questions were answered -----
+  function updateProgressBar() {
+    var answeredCount = 0;
+    for (var i = 0; i < alreadyAnswered.length; i++) {
+      if (alreadyAnswered[i] === true) {
+        answeredCount = answeredCount + 1;
+      }
+    }
+    var percent = (answeredCount / totalQuestions) * 100;
+    progressFill.style.width = percent + "%";
+  }
+
+  // ----- Runs after EVERY answer (correct or wrong) -----
+  function finishQuestion(questionIndex, isCorrect) {
+    var questionNumber = questionIndex + 1;  // arrays start at 0, but the HTML ids start at 1
+    var feedback = document.getElementById("feedback" + questionNumber);
+    var nextButton = document.getElementById("next" + questionNumber);
+
+    alreadyAnswered[questionIndex] = true;
+
+    if (isCorrect === true) {
+      // Correct: add the score and coins
+      score = score + 1;
+      coins = coins + coinsPerCorrectAnswer;
+      coinsDisplay.textContent = coins;
+
+      // Make the coin number "pop" for half a second
+      coinsDisplay.classList.add("pop");
+      setTimeout(function () {
+        coinsDisplay.classList.remove("pop");
+      }, 500);
+
+      // Green success message
+      feedback.className = "demo__msg ok";
+      feedback.textContent = "Correct! +" + coinsPerCorrectAnswer + " coins. " + explanations[questionIndex];
+
+      // Small confetti celebration (the confetti() function is further down in this file)
+      confetti(window.innerWidth / 2, window.innerHeight / 2);
+    } else {
+      // Wrong: show the correct answer and the explanation. No coins.
+      feedback.className = "demo__msg no";
+      feedback.textContent = "Not quite. The correct answer is " + correctAnswerText[questionIndex] + ". " + explanations[questionIndex];
+    }
+
+    feedback.hidden = false;      // show the feedback message
+    nextButton.hidden = false;    // show the Next button
+    updateProgressBar();
+  }
+
+  // ----- Question 1: Multiple Choice -----
+  function checkMultipleChoice(clickedButton) {
+    // Do nothing if this question was already answered
+    if (alreadyAnswered[0] === true) {
+      return;
+    }
+
+    var chosenLetter = clickedButton.getAttribute("data-letter");
+    var isCorrect = false;
+
+    // The correct answer is B
+    if (chosenLetter === "B") {
+      isCorrect = true;
+      clickedButton.classList.add("correct");
+    } else {
+      clickedButton.classList.add("wrong");
+    }
+
+    // Lock all four buttons and highlight the correct one in green
+    for (var i = 0; i < optionButtons.length; i++) {
+      optionButtons[i].disabled = true;
+      if (optionButtons[i].getAttribute("data-letter") === "B") {
+        optionButtons[i].classList.add("correct");
+      }
+    }
+
+    finishQuestion(0, isCorrect);
+  }
+
+  // ----- Questions 2, 3 and 4: typed answers -----
+  function checkTypedAnswer(questionIndex) {
+    var questionNumber = questionIndex + 1;
+    var input = document.getElementById("answer" + questionNumber);
+    var submitButton = document.getElementById("submit" + questionNumber);
+    var feedback = document.getElementById("feedback" + questionNumber);
+
+    // Do nothing if this question was already answered
+    if (alreadyAnswered[questionIndex] === true) {
+      return;
+    }
+
+    // Get what the player typed: remove extra spaces and make it lowercase
+    var userAnswer = input.value.trim().toLowerCase();
+
+    // If the box is empty, ask the player to type something
+    if (userAnswer === "") {
+      feedback.className = "demo__msg warn";
+      feedback.textContent = "Please type an answer first.";
+      feedback.hidden = false;
+      return;
+    }
+
+    // Check the answer
+    var isCorrect = false;
+
+    if (questionIndex === 1) {
+      // Question 2 (Fill in the Blanks): answer is 100
+      if (userAnswer === "100" || userAnswer === "one hundred") {
+        isCorrect = true;
+      }
+    } else if (questionIndex === 2) {
+      // Question 3 (Identification): answer is nucleus
+      if (userAnswer === "nucleus" || userAnswer === "the nucleus") {
+        isCorrect = true;
+      }
+    } else if (questionIndex === 3) {
+      // Question 4 (Scramble Words): answer is plant
+      if (userAnswer === "plant") {
+        isCorrect = true;
+      }
+    }
+
+    // Color the input box and lock it
+    if (isCorrect === true) {
+      input.classList.add("correct");
+    } else {
+      input.classList.add("wrong");
+    }
+    input.disabled = true;
+    submitButton.disabled = true;
+
+    finishQuestion(questionIndex, isCorrect);
+  }
+
+  // ----- Go to the next question (or the results after question 4) -----
+  function goToNextQuestion() {
+    if (currentQuestion < totalQuestions - 1) {
+      currentQuestion = currentQuestion + 1;
+      showQuestion();
+    } else {
+      showResults();
+    }
+  }
+
+  // ----- Completion screen -----
+  function showResults() {
+    // Hide all questions and show the results box
+    for (var i = 0; i < questionBoxes.length; i++) {
+      questionBoxes[i].hidden = true;
+    }
+    resultsBox.hidden = false;
+
+    questionNumberText.textContent = "Completed";
+    questionTypeText.textContent = "Results";
+
+    document.getElementById("finalScore").textContent = score + " / " + totalQuestions;
+    document.getElementById("finalCoins").textContent = coins;
+
+    // A different message depending on the score
+    var message = "";
+    if (score === totalQuestions) {
+      message = "A perfect score. You are ready for a group challenge!";
+    } else if (score >= 2) {
+      message = "Nice work! Try again to beat your score.";
+    } else {
+      message = "Good try! Give it another go to earn more coins.";
+    }
+    document.getElementById("resultMessage").textContent = message;
+
+    updateProgressBar();
+    confetti(window.innerWidth / 2, window.innerHeight / 2);
+  }
+
+  // ----- Restart: put everything back to the starting values -----
+  function restartDemo() {
+    currentQuestion = 0;
+    coins = 0;
+    score = 0;
+    coinsDisplay.textContent = coins;
+    resultsBox.hidden = true;
+
+    // Reset the "answered" list and hide all feedback messages and Next buttons
+    for (var i = 0; i < totalQuestions; i++) {
+      alreadyAnswered[i] = false;
+      document.getElementById("feedback" + (i + 1)).hidden = true;
+      document.getElementById("next" + (i + 1)).hidden = true;
+    }
+
+    // Reset the A, B, C, D buttons
+    for (var j = 0; j < optionButtons.length; j++) {
+      optionButtons[j].disabled = false;
+      optionButtons[j].classList.remove("correct");
+      optionButtons[j].classList.remove("wrong");
+    }
+
+    // Reset the typed answer boxes and Submit buttons (questions 2, 3, 4)
+    for (var k = 2; k <= 4; k++) {
+      var input = document.getElementById("answer" + k);
+      input.value = "";
+      input.disabled = false;
+      input.classList.remove("correct");
+      input.classList.remove("wrong");
+      document.getElementById("submit" + k).disabled = false;
+    }
+
+    showQuestion();
+  }
+
+  // ----- Connect the buttons to the functions above (event listeners) -----
+
+  // A, B, C, D buttons (question 1)
+  for (var a = 0; a < optionButtons.length; a++) {
+    optionButtons[a].addEventListener("click", function () {
+      checkMultipleChoice(this);   // "this" is the button that was clicked
     });
   }
 
-  function answer(i) {
-    const item = questions[qi];
-    const btns = $$("button", elO);
-    btns.forEach(b => (b.disabled = true));
-    btns[item.a].classList.add("correct");
-    if (i === item.a) {
-      coins += 10;
-      elC.textContent = coins;
-      elM.textContent = "✅ Correct! +10 coins";
-    } else {
-      btns[i].classList.add("wrong");
-      elM.textContent = "❌ Not quite. Keep going!";
-    }
-    elN.textContent = qi === questions.length - 1 ? "Play again ↻" : "Next question →";
-    elN.hidden = false;
+  // Submit Answer (questions 2, 3, 4)
+  for (var b = 0; b < answerForms.length; b++) {
+    answerForms[b].addEventListener("submit", function (event) {
+      event.preventDefault();      // stop the page from reloading
+      var questionNumber = Number(this.getAttribute("data-question"));
+      checkTypedAnswer(questionNumber - 1);
+    });
   }
 
-  elN.addEventListener("click", () => {
-    qi = (qi + 1) % questions.length;
-    if (qi === 0) { coins = 0; elC.textContent = 0; }
-    loadQ();
-  });
-  loadQ();
+  // Next question buttons
+  for (var c = 0; c < nextButtons.length; c++) {
+    nextButtons[c].addEventListener("click", goToNextQuestion);
+  }
+
+  // Restart button
+  document.getElementById("restartButton").addEventListener("click", restartDemo);
+
+  // Start the demo on question 1
+  showQuestion();
 
   /* ---------- Contact form (front-end only) ---------- */
   const form = $("#contactForm");
@@ -233,16 +485,6 @@
     raf = bits.length ? requestAnimationFrame(loop) : null;
     if (!raf) ctx.clearRect(0, 0, cv.width, cv.height);
   }
-
-  /* fire confetti + coin pop on correct demo answers */
-  $("#demoOpts").addEventListener("click", e => {
-    if ($("#demoMsg").textContent.includes("Correct")) {
-      const r = e.target.getBoundingClientRect();
-      confetti(r.left + r.width / 2, r.top);
-      const c = $("#demoCoins");
-      c.classList.remove("pop"); void c.offsetWidth; c.classList.add("pop");
-    }
-  });
 
   /* confetti burst on the CTA buttons too */
   $$(".cta__btns .btn, .hero__cta .btn--primary").forEach(b =>
