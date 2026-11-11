@@ -47,7 +47,7 @@
     <section class="hero" id="home">
       <div class="hero__grid"></div>
       <div class="hero__glow"></div>
-      <span class="floaty f1" aria-hidden="true"  >🪙</span>
+      <span class="floaty f1" aria-hidden="true"><span class="coin"></span></span>
       <span class="floaty f2" aria-hidden="true">🔥</span>
       <span class="floaty f3" aria-hidden="true">🏆</span>
       <span class="floaty f4" aria-hidden="true">⚡</span>
@@ -92,7 +92,7 @@
                 <div class="t-btns"><span>Quick Play</span><span class="dark">Create</span></div>
               </div>
               <div class="t-stats">
-                <div><b>🪙 120</b><small>Coins</small></div>
+                <div><b><span class="coin"></span> 120</b><small>Coins</small></div>
                 <div><b>🔥 7</b><small>Day Streak</small></div>
                 <div><b>✔ 24</b><small>Quizzes Done</small></div>
               </div>
@@ -110,9 +110,9 @@
             <div class="phone__screen">
               <h5>🏆 Weekly Leaderboard</h5>
               <ul>
-                <li><span>1</span> Matteo <b>🪙 100</b></li>
-                <li><span>2</span> Steve <b>🪙 50</b></li>
-                <li><span>3</span> Jasem <b>🪙 40</b></li>
+                <li><span>1</span> Matteo <b><span class="coin"></span> 100</b></li>
+                <li><span>2</span> Steve <b><span class="coin"></span> 50</b></li>
+                <li><span>3</span> Jasem <b><span class="coin"></span> 40</b></li>
               </ul>
               <div class="phone__code">
                 <small>JOIN CODE</small>
@@ -140,8 +140,8 @@
     <!-- vibe marquee -->
     <div class="marquee" aria-hidden="true">
       <div class="marquee__track">
-        <span>🔥 Keep your streak</span><span>🏆 Top the leaderboard</span><span>🪙 Earn coins</span><span>⚡ Beat the timer</span><span>🤝 Review with friends</span><span>🎮 Make studying a game</span>
-        <span>🔥 Keep your streak</span><span>🏆 Top the leaderboard</span><span>🪙 Earn coins</span><span>⚡ Beat the timer</span><span>🤝 Review with friends</span><span>🎮 Make studying a game</span>
+        <span>🔥 Keep your streak</span><span>🏆 Top the leaderboard</span><span><span class="coin"></span> Earn coins</span><span>⚡ Beat the timer</span><span>🤝 Review with friends</span><span>🎮 Make studying a game</span>
+        <span>🔥 Keep your streak</span><span>🏆 Top the leaderboard</span><span><span class="coin"></span> Earn coins</span><span>⚡ Beat the timer</span><span>🤝 Review with friends</span><span>🎮 Make studying a game</span>
       </div>
     </div>
 
@@ -248,19 +248,98 @@
           </article>
         </div>
 
-        <!-- interactive demo -->
-        <div class="demo reveal">
+        <!-- ===== QUICK PLAY DEMO =====
+         The four questions are written here in plain HTML.
+         script.js shows ONE question at a time and checks the answers. -->
+        <div class="demo reveal" id="demo">
+
+          <!-- Left side: title and coin counter -->
           <div class="demo__info">
             <span class="eyebrow">Try it</span>
             <h3>Quick Play demo</h3>
-            <p>Answer a sample question to see how Quizian rewards you.</p>
-            <div class="demo__score">🪙 Coins: <b id="demoCoins">0</b></div>
+            <p>Answer four sample questions, one of each quiz type, and see how Quizian rewards you.</p>
+            <div class="demo__score">
+              <span class="coin" aria-hidden="true"></span> Coins: <b id="coinsDisplay">0</b>
+            </div>
           </div>
+
+          <!-- Right side: the quiz card -->
           <div class="demo__box" id="demoBox">
-            <div class="demo__q" id="demoQ"></div>
-            <div class="demo__opts" id="demoOpts"></div>
-            <div class="demo__msg" id="demoMsg" aria-live="polite"></div>
-            <button class="btn btn--primary btn--sm" id="demoNext" hidden>Next question →</button>
+
+            <!-- Question number and question type -->
+            <div class="demo__top">
+              <span id="questionNumber">Question 1 of 4</span>
+              <span class="demo__type" id="questionType">Multiple Choice</span>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="demo__bar">
+              <div class="demo__fill" id="progressFill"></div>
+            </div>
+
+            <!-- QUESTION 1: Multiple Choice -->
+            <div class="question" id="question1">
+              <p class="demo__q">Which part of a plant absorbs sunlight for photosynthesis?</p>
+              <div class="demo__opts">
+                <button type="button" class="demo__opt" data-letter="A"><b>A</b> Roots</button>
+                <button type="button" class="demo__opt" data-letter="B"><b>B</b> Chlorophyll</button>
+                <button type="button" class="demo__opt" data-letter="C"><b>C</b> Stem</button>
+                <button type="button" class="demo__opt" data-letter="D"><b>D</b> Petals</button>
+              </div>
+              <p class="demo__msg" id="feedback1" hidden></p>
+              <button type="button" class="btn btn--primary btn--sm demo__next" id="next1" hidden>Next question →</button>
+            </div>
+
+            <!-- QUESTION 2: Fill in the Blanks -->
+            <div class="question" id="question2" hidden>
+              <p class="demo__q">Water boils at <span class="blank"></span> degrees Celsius at sea level.</p>
+              <p class="demo__hint">Type the missing number.</p>
+              <form class="demo__form" data-question="2">
+                <input type="text" class="demo__input" id="answer2" placeholder="Type your answer…" autocomplete="off" aria-label="Your answer">
+                <button type="submit" class="btn btn--primary btn--sm" id="submit2">Submit Answer</button>
+              </form>
+              <p class="demo__msg" id="feedback2" hidden></p>
+              <button type="button" class="btn btn--primary btn--sm demo__next" id="next2" hidden>Next question →</button>
+            </div>
+
+            <!-- QUESTION 3: Identification -->
+            <div class="question" id="question3" hidden>
+              <p class="demo__q">Identify the term: the dense center of an atom that contains protons and neutrons.</p>
+              <p class="demo__hint">Type the correct term.</p>
+              <form class="demo__form" data-question="3">
+                <input type="text" class="demo__input" id="answer3" placeholder="Type your answer…" autocomplete="off" aria-label="Your answer">
+                <button type="submit" class="btn btn--primary btn--sm" id="submit3">Submit Answer</button>
+              </form>
+              <p class="demo__msg" id="feedback3" hidden></p>
+              <button type="button" class="btn btn--primary btn--sm demo__next" id="next3" hidden>Next question →</button>
+            </div>
+
+            <!-- QUESTION 4: Scramble Words -->
+            <div class="question" id="question4" hidden>
+              <p class="demo__q">Rearrange the letters to form the correct word.</p>
+              <div class="tiles">
+                <span>T</span><span>N</span><span>A</span><span>L</span><span>P</span>
+              </div>
+              <p class="demo__hint">Clue: a living thing that makes its own food from sunlight.</p>
+              <form class="demo__form" data-question="4">
+                <input type="text" class="demo__input" id="answer4" placeholder="Type your answer…" autocomplete="off" aria-label="Your answer">
+                <button type="submit" class="btn btn--primary btn--sm" id="submit4">Submit Answer</button>
+              </form>
+              <p class="demo__msg" id="feedback4" hidden></p>
+              <button type="button" class="btn btn--primary btn--sm demo__next" id="next4" hidden>See my results →</button>
+            </div>
+
+            <!-- COMPLETION SCREEN -->
+            <div class="demo__result" id="results" hidden>
+              <h4>Congratulations! 🎉</h4>
+              <p class="demo__hint" id="resultMessage"></p>
+              <div class="demo__stats">
+                <div><b id="finalScore">0 / 4</b><small>Total score</small></div>
+                <div><b id="finalCoins">0</b><small>Coins earned</small></div>
+              </div>
+              <button type="button" class="btn btn--primary btn--sm" id="restartButton">Restart Demo ↻</button>
+            </div>
+
           </div>
         </div>
       </div>
