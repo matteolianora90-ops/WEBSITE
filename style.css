@@ -22,7 +22,6 @@
   padding: 0;
 }
 
-/* FIX: .btn sets display:inline-flex, which was overriding the `hidden` attribute */
 [hidden] {
   display: none !important;
 }
@@ -60,7 +59,6 @@ ul {
   margin-inline: auto;
 }
 
-/* CSS coin icon (replaces the 🪙 emoji, which shows as a box on some computers) */
 .coin {
   display: inline-block;
   width: 1.05em;
@@ -184,7 +182,7 @@ ul {
   color: rgba(255,255,255,.75);
   font-weight: 600;
   font-size: .9rem;
-  transition: .2s;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 .nav__links a:hover {
@@ -799,8 +797,6 @@ ul {
 }
 
 /* ============ QUICK PLAY DEMO ============ */
-
-/* The big dark-brown box that holds the whole demo */
 .demo {
   margin-top: 56px;
   display: grid;
@@ -822,7 +818,6 @@ ul {
   color: rgba(255, 255, 255, 0.65);
 }
 
-/* Coin counter (left side) */
 .demo__score {
   margin-top: 18px;
   display: inline-flex;
@@ -839,7 +834,6 @@ ul {
   font-size: 1.1rem;
 }
 
-/* The "pop" effect when coins go up (the class is added by script.js) */
 .demo__score b.pop {
   display: inline-block;
   animation: pop 0.5s;
@@ -852,7 +846,6 @@ ul {
   }
 }
 
-/* The cream-colored quiz card (right side) */
 .demo__box {
   background: var(--cream);
   color: var(--text);
@@ -861,7 +854,6 @@ ul {
   min-height: 360px;
 }
 
-/* Question number (left) and question type (right) */
 .demo__top {
   display: flex;
   justify-content: space-between;
@@ -880,7 +872,6 @@ ul {
   color: var(--orange-d);
 }
 
-/* Progress bar: gray track + orange fill */
 .demo__bar {
   height: 8px;
   border-radius: 999px;
@@ -897,7 +888,6 @@ ul {
   transition: width 0.5s;
 }
 
-/* Each question slides in when it appears */
 .question {
   animation: slideIn 0.4s ease;
 }
@@ -920,7 +910,6 @@ ul {
   margin-bottom: 14px;
 }
 
-/* The empty line for "fill in the blank" */
 .demo__q .blank {
   display: inline-block;
   width: 4em;
@@ -934,7 +923,6 @@ ul {
   margin-bottom: 12px;
 }
 
-/* Multiple choice buttons (A, B, C, D) */
 .demo__opts {
   display: grid;
   gap: 10px;
@@ -976,7 +964,6 @@ ul {
   cursor: default;
 }
 
-/* Colors added by script.js after the player answers */
 .demo__opt.correct {
   background: #d6f5df;
   border-color: var(--green);
@@ -987,7 +974,6 @@ ul {
   border-color: #e5484d;
 }
 
-/* Typed answer: text box + Submit button side by side */
 .demo__form {
   display: flex;
   gap: 10px;
@@ -1026,7 +1012,6 @@ ul {
   cursor: default;
 }
 
-/* The scrambled letter tiles */
 .tiles {
   display: flex;
   gap: 8px;
@@ -1045,7 +1030,6 @@ ul {
   font: 800 1.35rem var(--font);
 }
 
-/* Feedback message (green = correct, red = wrong, yellow = warning) */
 .demo__msg {
   margin-top: 14px;
   padding: 12px 14px;
@@ -1077,7 +1061,6 @@ ul {
   margin-top: 14px;
 }
 
-/* Completion screen */
 .demo__result {
   display: flex;
   flex-direction: column;
@@ -1312,6 +1295,16 @@ ul {
   text-align: center;
 }
 
+.form__err {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(229,72,77,.15);
+  color: #ff8c8c;
+  font-weight: 600;
+  text-align: center;
+}
+
 /* footer */
 .footer {
   background: #0f0a07;
@@ -1442,7 +1435,6 @@ ul {
   .footer__inner {
     grid-template-columns: 1fr;
   }
-  /* demo */
   .demo {
     padding: 20px;
     gap: 22px;
@@ -1526,43 +1518,15 @@ ul {
   pointer-events: none;
 }
 
-.f1 {
-  top: 18%;
-  left: 4%;
-}
-
-.f2 {
-  top: 62%;
-  left: 46%;
-  animation-delay: -1.5s;
-}
-
-.f3 {
-  top: 14%;
-  right: 6%;
-  animation-delay: -3s;
-  font-size: 2.4rem;
-}
-
-.f4 {
-  top: 78%;
-  left: 8%;
-  animation-delay: -2s;
-}
-
-.f5 {
-  top: 40%;
-  right: 2%;
-  animation-delay: -4s;
-}
+.f1 { top: 18%; left: 4%; }
+.f2 { top: 62%; left: 46%; animation-delay: -1.5s; }
+.f3 { top: 14%; right: 6%; animation-delay: -3s; font-size: 2.4rem; }
+.f4 { top: 78%; left: 8%; animation-delay: -2s; }
+.f5 { top: 40%; right: 2%; animation-delay: -4s; }
 
 @keyframes bob {
-  0%, 100% {
-    transform: translateY(0) rotate(-6deg);
-  }
-  50% {
-    transform: translateY(-22px) rotate(8deg);
-  }
+  0%, 100% { transform: translateY(0) rotate(-6deg); }
+  50% { transform: translateY(-22px) rotate(8deg); }
 }
 
 .btn--primary {
@@ -1617,9 +1581,7 @@ ul {
 }
 
 @keyframes scroll {
-  to {
-    transform: translateX(-50%);
-  }
+  to { transform: translateX(-50%); }
 }
 
 .card, .feature, .member, .step {
@@ -1633,9 +1595,7 @@ ul {
 }
 
 @keyframes wiggle {
-  50% {
-    transform: rotate(6deg) scale(1.05);
-  }
+  50% { transform: rotate(6deg) scale(1.05); }
 }
 
 .feature__icon, .card__icon {
@@ -1651,9 +1611,7 @@ ul {
 }
 
 @keyframes ctaGlow {
-  50% {
-    box-shadow: 0 30px 90px -20px rgba(255,129,51,1);
-  }
+  50% { box-shadow: 0 30px 90px -20px rgba(255,129,51,1); }
 }
 
 ::selection {
@@ -1661,37 +1619,22 @@ ul {
   color: #fff;
 }
 
-/* keyboard focus */
 .btn:focus-visible, .demo__opt:focus-visible, .nav__links a:focus-visible, .burger:focus-visible {
   outline: 3px solid var(--orange);
   outline-offset: 3px;
 }
 
 @media (hover: none) {
-  .cursor-glow {
-    display: none;
-  }
+  .cursor-glow { display: none; }
 }
 
 @media (max-width: 600px) {
-  .floaty {
-    font-size: 1.4rem;
-  }
-  .f2, .f5 {
-    display: none;
-  }
+  .floaty { font-size: 1.4rem; }
+  .f2, .f5 { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-  }
-  html {
-    scroll-behavior: auto;
-  }
-  .js .reveal {
-    opacity: 1;
-    translate: none;
-  }
+  * { animation: none !important; transition: none !important; }
+  html { scroll-behavior: auto; }
+  .js .reveal { opacity: 1; translate: none; }
 }
