@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quizian – Review Together. Compete. Level Up.</title>
+  <title>Quizian – Review Together. Compete.</title>
   <meta name="description" content="Quizian is an interactive learning platform that makes reviewing fun with quiz formats, timed group challenges, points and leaderboards." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -59,7 +59,7 @@
           <h1>
             <span class="accent">R</span>eview together.<br />
             Compete, earn coins,<br />
-            <em>level up.</em>
+            
           </h1>
           <p class="lead">
             Quizian turns boring solo reviewing into a fun game with your friends and classmates.
@@ -182,28 +182,33 @@
           </article>
         </div>
 
-        <h3 class="subhead reveal">Meet the Team</h3>
+       <h3 class="subhead reveal">Meet the Team</h3>
         <div class="team">
           <div class="member reveal">
-            <div class="avatar">JM</div>
+            <div class="avatar">
+              <img src="jas.3.jfif" alt="Jasem Madidis" />
+            </div>
             <h4>Jasem Madidis</h4>
             <span>Project Manager</span>
             <p>Oversees the project, manages the timeline and coordinates the team.</p>
           </div>
           <div class="member reveal">
-            <div class="avatar">SP</div>
+            <div class="avatar">
+              <img src="stev.2.jfif" alt="Steve Owein Presidente" />
+            </div>
             <h4>Steve Owein Presidente</h4>
             <span>System Analyst</span>
             <p>Analyzes user needs, defines requirements and designs the system workflow.</p>
           </div>
           <div class="member reveal">
-            <div class="avatar">ML</div>
+            <div class="avatar">
+              <img src="mat.1.jfif" alt="Matteo Lianora" />
+            </div>
             <h4>Matteo Lianora</h4>
             <span>Programmer</span>
             <p>Develops the platform, implements features and handles testing and debugging.</p>
           </div>
         </div>
-      </div>
     </section>
 
     <!-- ============ 3. PRODUCTS / SERVICES ============ -->
@@ -248,12 +253,8 @@
           </article>
         </div>
 
-        <!-- ===== QUICK PLAY DEMO =====
-         The four questions are written here in plain HTML.
-         script.js shows ONE question at a time and checks the answers. -->
+        <!-- ===== QUICK PLAY DEMO ===== -->
         <div class="demo reveal" id="demo">
-
-          <!-- Left side: title and coin counter -->
           <div class="demo__info">
             <span class="eyebrow">Try it</span>
             <h3>Quick Play demo</h3>
@@ -263,21 +264,16 @@
             </div>
           </div>
 
-          <!-- Right side: the quiz card -->
           <div class="demo__box" id="demoBox">
-
-            <!-- Question number and question type -->
             <div class="demo__top">
               <span id="questionNumber">Question 1 of 4</span>
               <span class="demo__type" id="questionType">Multiple Choice</span>
             </div>
 
-            <!-- Progress bar -->
             <div class="demo__bar">
               <div class="demo__fill" id="progressFill"></div>
             </div>
 
-            <!-- QUESTION 1: Multiple Choice -->
             <div class="question" id="question1">
               <p class="demo__q">Which part of a plant absorbs sunlight for photosynthesis?</p>
               <div class="demo__opts">
@@ -290,7 +286,6 @@
               <button type="button" class="btn btn--primary btn--sm demo__next" id="next1" hidden>Next question →</button>
             </div>
 
-            <!-- QUESTION 2: Fill in the Blanks -->
             <div class="question" id="question2" hidden>
               <p class="demo__q">Water boils at <span class="blank"></span> degrees Celsius at sea level.</p>
               <p class="demo__hint">Type the missing number.</p>
@@ -302,7 +297,6 @@
               <button type="button" class="btn btn--primary btn--sm demo__next" id="next2" hidden>Next question →</button>
             </div>
 
-            <!-- QUESTION 3: Identification -->
             <div class="question" id="question3" hidden>
               <p class="demo__q">Identify the term: the dense center of an atom that contains protons and neutrons.</p>
               <p class="demo__hint">Type the correct term.</p>
@@ -314,7 +308,6 @@
               <button type="button" class="btn btn--primary btn--sm demo__next" id="next3" hidden>Next question →</button>
             </div>
 
-            <!-- QUESTION 4: Scramble Words -->
             <div class="question" id="question4" hidden>
               <p class="demo__q">Rearrange the letters to form the correct word.</p>
               <div class="tiles">
@@ -329,7 +322,6 @@
               <button type="button" class="btn btn--primary btn--sm demo__next" id="next4" hidden>See my results →</button>
             </div>
 
-            <!-- COMPLETION SCREEN -->
             <div class="demo__result" id="results" hidden>
               <h4>Congratulations! 🎉</h4>
               <p class="demo__hint" id="resultMessage"></p>
@@ -355,7 +347,7 @@
         <div class="steps">
           <div class="step reveal"><b>1</b><h3>Upload &amp; Create</h3><p>Drop your study file, choose the number of questions, difficulty and quiz types, then generate.</p></div>
           <div class="step reveal"><b>2</b><h3>Challenge a Friend</h3><p>Pick a quiz, set the time limit and share your join code with classmates.</p></div>
-          <div class="step reveal"><b>3</b><h3>Compete &amp; Level Up</h3><p>Earn coins, keep your streak alive and rise on the leaderboard.</p></div>
+          <div class="step reveal"><b>3</b><h3>Compete &amp; Earn Coins</h3><p>Earn coins, keep your streak alive and rise on the leaderboard.</p></div>
         </div>
       </div>
     </section>
@@ -375,7 +367,7 @@
       </div>
     </section>
 
-    <!-- ============ 6 & 7. CONTACT + FORM ============ -->
+    <!-- ============ 6 & 7. CONTACT + FULLY FUNCTIONAL FORM ============ -->
     <section class="section section--dark" id="contact">
       <div class="container">
         <div class="section__head reveal">
@@ -396,41 +388,32 @@
             </ul>
           </div>
 
-          <form class="form reveal" id="contactForm" novalidate>
+          <!-- Fully functional contact form configured with Web3Forms -->
+          <form class="form reveal" id="contactForm" action="https://api.web3forms.com/submit" method="POST" novalidate>
             <h3>Send us a message</h3>
 
+            <!-- Replace with your actual Web3Forms Access Key from web3forms.com -->
+            <input type="hidden" name="apikey" value="YOUR_ACCESS_KEY_HERE">
+            <input type="hidden" name="subject" value="New Inquiry from Quizian Website">
+            <!-- Optional: Redirect or bot protection -->
+            <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+
             <div class="field">
-              <label for="name">Full name</label>
+              <label for="name">Full Name</label>
               <input type="text" id="name" name="name" placeholder="Juan Dela Cruz" required />
               <small class="error" data-for="name"></small>
             </div>
 
             <div class="field">
-              <label for="email">Email</label>
+              <label for="email">Email Address</label>
               <input type="email" id="email" name="email" placeholder="you@email.com" required />
               <small class="error" data-for="email"></small>
             </div>
 
             <div class="field">
-              <label for="type">I am a…</label>
-              <select id="type" name="type" required>
-                <option value="">Select one</option>
-                <option>High school student</option>
-                <option>Senior high school student</option>
-                <option>College student</option>
-                <option>Teacher / School representative</option>
-              </select>
-              <small class="error" data-for="type"></small>
-            </div>
-
-            <div class="field">
-              <label for="topic">Topic</label>
-              <select id="topic" name="topic">
-                <option>General inquiry</option>
-                <option>Feedback</option>
-                <option>School partnership</option>
-                <option>Report a problem</option>
-              </select>
+              <label for="subjectField">Subject</label>
+              <input type="text" id="subjectField" name="message_subject" placeholder="General Inquiry / Feedback" required />
+              <small class="error" data-for="message_subject"></small>
             </div>
 
             <div class="field">
@@ -439,8 +422,9 @@
               <small class="error" data-for="message"></small>
             </div>
 
-            <button type="submit" class="btn btn--primary btn--block">Submit</button>
-            <p class="form__ok" id="formOk" role="status" hidden>✅ Thank you! Your message has been submitted.</p>
+            <button type="submit" class="btn btn--primary btn--block" id="submitBtn">Send Message</button>
+            <p class="form__ok" id="formOk" role="status" hidden>✅ Thank you! Your message has been sent successfully.</p>
+            <p class="form__err" id="formErr" role="alert" hidden>❌ Oops! Something went wrong. Please try again.</p>
           </form>
         </div>
       </div>
@@ -455,7 +439,7 @@
           <img class="brand__logo" src="download.jfif" alt="" width="42" height="42" />
           <span>Quizian</span>
         </a>
-        <p>Review together. Compete, earn coins, level up.</p>
+        <p>Review together. Compete, earn coins.</p>
       </div>
       <nav class="footer__links" aria-label="Footer">
         <a href="#home">Home</a><a href="#about">About</a><a href="#products">Products</a><a href="#contact">Contact</a>
