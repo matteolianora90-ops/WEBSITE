@@ -27,6 +27,7 @@
 
       <nav class="nav__links" id="navLinks" aria-label="Main">
         <a href="#home" class="active">Home</a>
+        <a href="#promo">Video</a>
         <a href="#about">About Us</a>
         <a href="#products">Products</a>
         <a href="#how">How it Works</a>
@@ -59,8 +60,7 @@
           <span class="pill"><i></i> Inspiring Change, Creating Futures</span>
           <h1>
             <span class="accent">R</span>eview together.<br />
-            Compete, earn coins,<br />
-            
+            Compete,<br />
           </h1>
           <p class="lead">
             Quizian turns boring solo reviewing into a fun game with your friends and classmates.
@@ -109,7 +109,7 @@
           <div class="phone">
             <div class="phone__notch"></div>
             <div class="phone__screen">
-              <h5>  🏆Leaderboard</h5>
+              <h5>🏆 Leaderboard</h5>
               <ul>
                 <li><span>1</span> Matteo <b><span class="coin"></span> 100</b></li>
                 <li><span>2</span> Steve <b><span class="coin"></span> 50</b></li>
@@ -145,6 +145,36 @@
         <span>🔥 Keep your streak</span><span>🏆 Top the leaderboard</span><span><span class="coin"></span> Earn coins</span><span>⚡ Beat the timer</span><span>🤝 Review with friends</span><span>🎮 Make studying a game</span>
       </div>
     </div>
+
+    <!-- ============ 5. PROMOTIONAL VIDEO SECTION ============ -->
+    <section class="video-section" id="promo">
+      <div class="container">
+        <div class="section__head reveal">
+          <span class="eyebrow">Walkthrough &amp; Preview</span>
+          <h2>See Quizian in <em>Action</em></h2>
+          <p>Watch our 60-second promotional video to discover how Quizian transforms study sessions into engaging competitions.</p>
+        </div>
+
+        <div class="video-container reveal">
+          <video id="promoVideo" src="Quizian_Promo_60s.mp4" preload="metadata" playsinline></video>
+          
+          <div class="video-controls-bar">
+            <div class="video-controls-left">
+              <button class="v-btn" id="playPauseBtn" aria-label="Play/Pause">▶</button>
+              <button class="v-btn" id="replayBtn" aria-label="Replay">🔄</button>
+              <div class="video-progress-container" id="videoProgressContainer" aria-label="Video timeline">
+                <div class="video-progress-filled" id="videoProgressFilled"></div>
+              </div>
+              <span class="video-time" id="videoTimeDisplay">0:00 / 1:00</span>
+            </div>
+            <div class="video-controls-right">
+              <button class="v-btn" id="muteBtn" aria-label="Mute/Unmute">🔊</button>
+              <button class="v-btn" id="fullscreenBtn" aria-label="Fullscreen">⛶</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- ============ 2. ABOUT US ============ -->
     <section class="section section--light" id="about">
@@ -185,7 +215,7 @@
       </div>
     </section>
 
-    <!-- ============ 3. PRODUCTS / SERVICES ============ -->
+    <!-- ============ 3. PRODUCTS OR SERVICES ============ -->
     <section class="section section--dark" id="products">
       <div class="container">
         <div class="section__head reveal">
@@ -223,7 +253,7 @@
           <article class="feature feature--wide reveal">
             <span class="feature__icon">🏆</span>
             <h3>Points &amp; Leaderboard</h3>
-            <p>Earn coins and XP for every correct answer and climb the ranking for friendly competition.</p>
+            <p>Earn coins for every correct answer and climb the ranking for friendly competition.</p>
           </article>
         </div>
 
@@ -321,12 +351,12 @@
         <div class="steps">
           <div class="step reveal"><b>1</b><h3>Upload &amp; Create</h3><p>Drop your study file, choose the number of questions, difficulty and quiz types, then generate.</p></div>
           <div class="step reveal"><b>2</b><h3>Challenge a Friend</h3><p>Pick a quiz, set the time limit and share your join code with classmates.</p></div>
-          <div class="step reveal"><b>3</b><h3>Compete &amp; Earn Coins</h3><p>Earn coins, keep your streak alive and rise on the leaderboard.</p></div>
+          <div class="step reveal"><b>3</b><h3>Compete &amp; Earn Coins</h3><p>Earn coins, to rise on the leaderboard.</p></div>
         </div>
       </div>
     </section>
 
-    <!-- ============ 4. CALL TO ACTION ============ -->
+    <!-- ============ 4. CALL TO ACTION (CTA) ============ -->
     <section class="cta" id="cta">
       <div class="container">
         <div class="cta__box reveal">
@@ -334,14 +364,14 @@
           <h2>Ready to make reviewing fun?</h2>
           <p>Join Quizian for free and turn your next study session into a challenge.</p>
           <div class="cta__btns">
-            <a href="#contact" class="btn btn--light">Join Now</a>
+            <a href="#contact" class="btn btn--light">Contact Us</a>
             <a href="#products" class="btn btn--outline">Learn More</a>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ============ 6 & 7. CONTACT + FULLY FUNCTIONAL FORM ============ -->
+    <!-- ============ 6. CONTACT INFO & 7. SIMPLE FORM ============ -->
     <section class="section section--dark" id="contact">
       <div class="container">
         <div class="section__head reveal">
@@ -362,14 +392,12 @@
             </ul>
           </div>
 
-          <!-- Fully functional contact form configured with Web3Forms -->
+          <!-- Fully functional form configured with Web3Forms -->
           <form class="form reveal" id="contactForm" action="https://api.web3forms.com/submit" method="POST" novalidate>
             <h3>Send us a message</h3>
 
-            <!-- Replace with your actual Web3Forms Access Key from web3forms.com -->
             <input type="hidden" name="apikey" value="YOUR_ACCESS_KEY_HERE">
             <input type="hidden" name="subject" value="New Inquiry from Quizian Website">
-            <!-- Optional: Redirect or bot protection -->
             <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
 
             <div class="field">
@@ -404,7 +432,7 @@
       </div>
     </section>
 
-    <!-- ============ MEET THE TEAM (Moved to Final Section) ============ -->
+    <!-- ============ MEET THE TEAM (Final Section before Footer) ============ -->
     <section class="section section--light" id="team">
       <div class="container">
         <div class="section__head reveal">
@@ -450,10 +478,10 @@
           <img class="brand__logo" src="download.jfif" alt="" width="42" height="42" />
           <span>Quizian</span>
         </a>
-        <p>Review together. Compete, earn coins.</p>
+        <p>Review together. Compete together.</p>
       </div>
       <nav class="footer__links" aria-label="Footer">
-        <a href="#home">Home</a><a href="#about">About</a><a href="#products">Products</a><a href="#contact">Contact</a><a href="#team">Team</a>
+        <a href="#home">Home</a><a href="#promo">Video</a><a href="#about">About</a><a href="#products">Products</a><a href="#contact">Contact</a><a href="#team">Team</a>
       </nav>
       <p class="footer__copy">© <span id="year"></span> Quizian · Institute of Computing, DNSC</p>
     </div>
