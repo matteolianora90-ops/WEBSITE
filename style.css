@@ -607,6 +607,113 @@ ul {
   transform: translateY(-4px);
 }
 
+/* ============ PROMOTIONAL VIDEO SECTION ============ */
+.video-section {
+  padding: 100px 0;
+  background: var(--ink-2);
+  color: #fff;
+  text-align: center;
+}
+
+.video-container {
+  position: relative;
+  max-width: 860px;
+  margin: 40px auto 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid rgba(255, 129, 51, 0.35);
+  box-shadow: 0 25px 60px -15px rgba(0,0,0,0.8), 0 0 50px -10px rgba(255,129,51,0.3);
+}
+
+.video-container video {
+  width: 100%;
+  height: auto;
+  display: block;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  background: #000;
+}
+
+.video-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  background: rgba(15, 10, 7, 0.96);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.video-controls-left,
+.video-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.v-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.v-btn:hover {
+  background: var(--orange);
+  transform: translateY(-2px);
+}
+
+.video-progress-container {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  margin: 0 10px;
+  min-width: 100px;
+}
+
+.video-progress-filled {
+  height: 100%;
+  width: 0;
+  background: var(--orange);
+  border-radius: 999px;
+  transition: width 0.1s linear;
+}
+
+.video-time {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-variant-numeric: tabular-nums;
+  min-width: 84px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .video-controls-bar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .video-progress-container {
+    width: 100%;
+    order: 3;
+    margin: 8px 0 0;
+  }
+  .video-time {
+    order: 2;
+  }
+}
+
 /* ============ SECTIONS ============ */
 .section {
   padding: 100px 0;
