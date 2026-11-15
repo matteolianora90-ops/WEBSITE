@@ -32,7 +32,7 @@
     });
   });
 
-  const targetSections = ["#home", "#promo", "#about", "#products", "#how", "#contact", "#team"].map(sel => $(sel)).filter(Boolean);
+  const targetSections = ["#home", "#about", "#products", "#how", "#contact"].map(sel => $(sel)).filter(Boolean);
   const spy = new IntersectionObserver(
     entries => {
       entries.forEach(e => {
@@ -89,6 +89,124 @@
     { threshold: 0.6 }
   );
   $$("[data-count]").forEach(el => countObs.observe(el));
+
+  /* =====================================================
+     3D ROTATING SCREENSHOT CAROUSEL
+     ===================================================== */
+  const track = $("#carouselTrack");
+  const items = $$(".carousel-3d-item", track);
+  const dots = $$(".carousel-dot");
+  const prevBtn = $("#carouselPrev");
+  const nextBtn = $("#carouselNext");
+  const scene = $("#carouselScene");
+
+  if (track && items.length > 0) {
+    let currentAngle = 0;
+    let targetAngle = 0;
+    let isDragging = false;
+    let startX = 0;
+    let currentX = 0;
+    let autoRotateTimer = null;
+    let isHovered = false;
+    const totalItems = items.length;
+    const angleStep = 360 / totalItems;
+
+    function getRadius() {
+      return window.innerWidth < 768 ? 260 : 500;
+    }
+
+    function updateCarouselLayout() {
+      const radius = getRadius();
+      items.forEach((item, index) => {
+        const itemAngle = index * angleStep;
+        item.style.transform = `rotateY(${itemAngle}deg) translateZ(${radius}px)`;
+      });
+    }
+
+    function updateTrackTransform() {
+      track.style.transform = `rotateY(${currentAngle}deg)`;
+      
+      let normalized = (-currentAngle % 360);
+      if (normalized < 0) normalized += 360;
+      let activeIdx = Math.round(normalized / angleStep) % totalItems;
+      
+      dots.forEach((dot, idx) => {
+        dot.classList.toggle("active", idx === activeIdx);
+      });
+    }
+
+    function animateCarousel() {
+      currentAngle += (targetAngle - currentAngle) * 0.08;
+      updateTrackTransform();
+      requestAnimationFrame(animateCarousel);
+    }
+
+    function startAutoRotate() {
+      if (autoRotateTimer) clearInterval(autoRotateTimer);
+      autoRotateTimer = setInterval(() => {
+        if (!isHovered && !isDragging) {
+          targetAngle -= angleStep;
+        }
+      }, 4000);
+    }
+
+    scene.addEventListener("pointerdown", e => {
+      isDragging = true;
+      startX = e.clientX;
+      currentX = startX;
+      scene.setPointerCapture(e.pointerId);
+    });
+
+    scene.addEventListener("pointermove", e => {
+      if (!isDragging) return;
+      const deltaX = e.clientX - currentX;
+      currentX = e.clientX;
+      targetAngle += deltaX * 0.4;
+    });
+
+    scene.addEventListener("pointerup", e => {
+      if (!isDragging) return;
+      isDragging = false;
+      targetAngle = -Math.round(-targetAngle / angleStep) * angleStep;
+      startAutoRotate();
+    });
+
+    scene.addEventListener("pointercancel", () => {
+      isDragging = false;
+      startAutoRotate();
+    });
+
+    scene.addEventListener("mouseenter", () => { isHovered = true; });
+    scene.addEventListener("mouseleave", () => { isHovered = false; });
+
+    if (prevBtn) {
+      prevBtn.addEventListener("click", () => {
+        targetAngle += angleStep;
+        startAutoRotate();
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener("click", () => {
+        targetAngle -= angleStep;
+        startAutoRotate();
+      });
+    }
+
+    dots.forEach(dot => {
+      dot.addEventListener("click", () => {
+        const idx = +dot.dataset.index;
+        targetAngle = -idx * angleStep;
+        startAutoRotate();
+      });
+    });
+
+    window.addEventListener("resize", updateCarouselLayout);
+
+    updateCarouselLayout();
+    requestAnimationFrame(animateCarousel);
+    startAutoRotate();
+  }
 
   /* =====================================================
      QUICK PLAY DEMO
