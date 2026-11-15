@@ -177,11 +177,11 @@ ul {
 }
 
 .nav__links a {
-  padding: 8px 18px;
+  padding: 8px 16px;
   border-radius: 999px;
   color: rgba(255,255,255,.75);
   font-weight: 600;
-  font-size: .9rem;
+  font-size: .85rem;
   transition: background 0.3s ease, color 0.3s ease;
 }
 
@@ -607,6 +607,178 @@ ul {
   transform: translateY(-4px);
 }
 
+/* ============ 3D ROTATING SCREENSHOT SHOWCASE ============ */
+.showcase-3d {
+  position: relative;
+  padding: 110px 0;
+  background: var(--ink-2);
+  color: #fff;
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 129, 51, 0.2);
+  border-bottom: 1px solid rgba(255, 129, 51, 0.2);
+}
+
+.showcase-3d__glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(255, 129, 51, 0.35), transparent 65%);
+  pointer-events: none;
+  filter: blur(60px);
+  z-index: 1;
+}
+
+.carousel-3d-wrapper {
+  position: relative;
+  z-index: 2;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+.carousel-3d-scene {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  perspective: 1600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  touch-action: pan-y;
+}
+
+.carousel-3d-track {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.carousel-3d-item {
+  position: absolute;
+  width: 680px;
+  max-width: 86vw;
+  height: 400px;
+  left: calc(50% - 340px);
+  top: calc(50% - 200px);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #110c08;
+  border: 2px solid rgba(255, 129, 51, 0.5);
+  box-shadow: 0 35px 70px rgba(0, 0, 0, 0.8), 0 0 60px rgba(255, 129, 51, 0.28);
+  transition: border-color 0.3s, box-shadow 0.3s;
+  cursor: grab;
+}
+
+.carousel-3d-item:active {
+  cursor: grabbing;
+}
+
+.carousel-3d-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center center;
+  display: block;
+  background: #16100c;
+}
+
+.carousel-3d-caption {
+  position: absolute;
+  bottom: 0;
+  inset-inline: 0;
+  padding: 14px 22px;
+  background: linear-gradient(transparent, rgba(15, 10, 7, 0.96) 65%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.carousel-3d-caption span {
+  font-size: 0.78rem;
+  color: var(--peach);
+  background: rgba(255, 129, 51, 0.22);
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 129, 51, 0.4);
+}
+
+.carousel-3d-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 36px;
+  position: relative;
+  z-index: 3;
+}
+
+.carousel-3d-dots {
+  display: flex;
+  gap: 10px;
+}
+
+.carousel-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.carousel-dot.active {
+  background: var(--orange);
+  transform: scale(1.35);
+  box-shadow: 0 0 14px var(--orange);
+}
+
+.carousel-arrow {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: background 0.2s, transform 0.2s, border-color 0.2s;
+}
+
+.carousel-arrow:hover {
+  background: var(--orange);
+  border-color: var(--orange);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .carousel-3d-scene {
+    height: 360px;
+  }
+  .carousel-3d-item {
+    width: 330px;
+    height: 210px;
+    left: calc(50% - 165px);
+    top: calc(50% - 105px);
+  }
+}
+
 /* ============ PROMOTIONAL VIDEO SECTION ============ */
 .video-section {
   padding: 100px 0;
@@ -805,12 +977,6 @@ ul {
   font-size: .95rem;
 }
 
-.subhead {
-  text-align: center;
-  font: 700 1.6rem var(--serif);
-  margin: 70px 0 28px;
-}
-
 .team {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -835,6 +1001,13 @@ ul {
   background: linear-gradient(135deg, var(--peach), var(--orange));
   color: #fff;
   font: 800 1.5rem var(--font);
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .member h4 {
