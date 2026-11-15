@@ -17,7 +17,7 @@
   <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
   <canvas id="confetti" aria-hidden="true"></canvas>
 
-  <!-- ============ NAVBAR ============ -->
+  <!-- ============ NAVBAR (3D Showcase, Video, Team links removed) ============ -->
   <header class="nav" id="nav">
     <div class="container nav__inner">
       <a href="#home" class="brand" aria-label="Quizian home">
@@ -27,12 +27,10 @@
 
       <nav class="nav__links" id="navLinks" aria-label="Main">
         <a href="#home" class="active">Home</a>
-        <a href="#promo">Video</a>
         <a href="#about">About Us</a>
         <a href="#products">Products</a>
         <a href="#how">How it Works</a>
         <a href="#contact">Contact</a>
-        <a href="#team">Team</a>
       </nav>
 
       <div class="nav__actions">
@@ -146,7 +144,65 @@
       </div>
     </div>
 
-    <!-- ============ 5. PROMOTIONAL VIDEO SECTION ============ -->
+    <!-- ============ 3D ROTATING SCREENSHOT SHOWCASE (Section kept fully intact) ============ -->
+    <section class="showcase-3d" id="showcase">
+      <div class="showcase-3d__glow" aria-hidden="true"></div>
+      <div class="container">
+        <div class="section__head reveal">
+          <span class="eyebrow">Interactive 3D Showcase</span>
+          <h2>Explore Quizian in <em>3D Rotation</em></h2>
+          <p>Drag, swipe, or hover to examine our core screens: My Quizzes, Home Dashboard, Activity, and Challenge lobbies.</p>
+        </div>
+
+        <div class="carousel-3d-wrapper reveal">
+          <div class="carousel-3d-scene" id="carouselScene" aria-label="3D Rotating Screenshot Showcase">
+            <div class="carousel-3d-track" id="carouselTrack">
+              <!-- Screenshot 1: My Quizzes -->
+              <div class="carousel-3d-item" data-index="0">
+                <img src="First1.jfif" alt="Quizian My Quizzes Screenshot" loading="lazy" />
+                <div class="carousel-3d-caption">
+                  1. My Quizzes <span>Quiz Creation &amp; Saved Decks</span>
+                </div>
+              </div>
+              <!-- Screenshot 2: Home Dashboard -->
+              <div class="carousel-3d-item" data-index="1">
+                <img src="Second2.jfif" alt="Quizian Home Dashboard Screenshot" loading="lazy" />
+                <div class="carousel-3d-caption">
+                  2. Home Dashboard <span>Progress &amp; Quick Actions</span>
+                </div>
+              </div>
+              <!-- Screenshot 3: Activity -->
+              <div class="carousel-3d-item" data-index="2">
+                <img src="Third3.jfif" alt="Quizian Activity Screenshot" loading="lazy" />
+                <div class="carousel-3d-caption">
+                  3. Activity <span>Study History &amp; Accuracy</span>
+                </div>
+              </div>
+              <!-- Screenshot 4: Challenge -->
+              <div class="carousel-3d-item" data-index="3">
+                <img src="Fourth4.jfif" alt="Quizian Challenge Screenshot" loading="lazy" />
+                <div class="carousel-3d-caption">
+                  4. Challenge <span>Multiplayer Lobbies &amp; Settings</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-3d-nav">
+            <button class="carousel-arrow" id="carouselPrev" aria-label="Previous screenshot">‹</button>
+            <div class="carousel-3d-dots" id="carouselDots">
+              <button class="carousel-dot active" data-index="0" aria-label="Go to slide 1"></button>
+              <button class="carousel-dot" data-index="1" aria-label="Go to slide 2"></button>
+              <button class="carousel-dot" data-index="2" aria-label="Go to slide 3"></button>
+              <button class="carousel-dot" data-index="3" aria-label="Go to slide 4"></button>
+            </div>
+            <button class="carousel-arrow" id="carouselNext" aria-label="Next screenshot">›</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROMOTIONAL VIDEO SECTION (Section kept fully intact) ============ -->
     <section class="video-section" id="promo">
       <div class="container">
         <div class="section__head reveal">
@@ -176,7 +232,7 @@
       </div>
     </section>
 
-    <!-- ============ 2. ABOUT US ============ -->
+    <!-- ============ ABOUT US ============ -->
     <section class="section section--light" id="about">
       <div class="container">
         <div class="section__head reveal">
@@ -215,7 +271,7 @@
       </div>
     </section>
 
-    <!-- ============ 3. PRODUCTS OR SERVICES ============ -->
+    <!-- ============ PRODUCTS OR SERVICES ============ -->
     <section class="section section--dark" id="products">
       <div class="container">
         <div class="section__head reveal">
@@ -356,7 +412,7 @@
       </div>
     </section>
 
-    <!-- ============ 4. CALL TO ACTION (CTA) ============ -->
+    <!-- ============ CALL TO ACTION (CTA) ============ -->
     <section class="cta" id="cta">
       <div class="container">
         <div class="cta__box reveal">
@@ -371,7 +427,7 @@
       </div>
     </section>
 
-    <!-- ============ 6. CONTACT INFO & 7. SIMPLE FORM ============ -->
+    <!-- ============ CONTACT INFO & SIMPLE FORM ============ -->
     <section class="section section--dark" id="contact">
       <div class="container">
         <div class="section__head reveal">
@@ -432,7 +488,7 @@
       </div>
     </section>
 
-    <!-- ============ MEET THE TEAM (Final Section before Footer) ============ -->
+    <!-- ============ MEET THE TEAM (Section kept fully intact) ============ -->
     <section class="section section--light" id="team">
       <div class="container">
         <div class="section__head reveal">
@@ -481,7 +537,7 @@
         <p>Review together. Compete together.</p>
       </div>
       <nav class="footer__links" aria-label="Footer">
-        <a href="#home">Home</a><a href="#promo">Video</a><a href="#about">About</a><a href="#products">Products</a><a href="#contact">Contact</a><a href="#team">Team</a>
+        <a href="#home">Home</a><a href="#about">About</a><a href="#products">Products</a><a href="#contact">Contact</a>
       </nav>
       <p class="footer__copy">© <span id="year"></span> Quizian · Institute of Computing, DNSC</p>
     </div>
