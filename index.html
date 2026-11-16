@@ -3,29 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quizian – Review Together. Compete.</title>
+  <title>Quizian – Learn Together. Grow Together</title>
   <meta name="description" content="Quizian is an interactive learning platform that makes reviewing fun with quiz formats, timed group challenges, points and leaderboards." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet" />
-  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="icon" type="image/jpeg" href="download.jfif" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <div class="progress" id="progress"></div>
+  <div class="progress" id="progress" aria-hidden="true"></div>
   <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
   <canvas id="confetti" aria-hidden="true"></canvas>
 
-  <!-- ============ NAVBAR (3D Showcase, Video, Team links removed) ============ -->
+  <!-- ============ NAVBAR ============ -->
   <header class="nav" id="nav">
     <div class="container nav__inner">
       <a href="#home" class="brand" aria-label="Quizian home">
-        <img class="brand__logo" src="download.jfif" alt="" width="42" height="42" />
+        <img class="brand__logo" src="download.jfif" alt="Quizian Logo" width="42" height="42" />
         <span>Quizian</span>
       </a>
 
-      <nav class="nav__links" id="navLinks" aria-label="Main">
+      <nav class="nav__links" id="navLinks" aria-label="Main Navigation">
         <a href="#home" class="active">Home</a>
         <a href="#about">About Us</a>
         <a href="#products">Products</a>
@@ -34,8 +34,8 @@
       </nav>
 
       <div class="nav__actions">
-        <a href="#cta" class="btn btn--primary btn--sm">Get Started</a>
-        <button class="burger" id="burger" aria-label="Toggle menu" aria-expanded="false">
+        <a href="#demo" class="btn btn--primary btn--sm">Try Demo</a>
+        <button type="button" class="burger" id="burger" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
           <span></span><span></span><span></span>
         </button>
       </div>
@@ -43,10 +43,10 @@
   </header>
 
   <main>
-    <!-- ============ 1. HOME ============ -->
+    <!-- ============ 1. HOME / HERO ============ -->
     <section class="hero" id="home">
-      <div class="hero__grid"></div>
-      <div class="hero__glow"></div>
+      <div class="hero__grid" aria-hidden="true"></div>
+      <div class="hero__glow" aria-hidden="true"></div>
       <span class="floaty f1" aria-hidden="true"><span class="coin"></span></span>
       <span class="floaty f2" aria-hidden="true">🔥</span>
       <span class="floaty f3" aria-hidden="true">🏆</span>
@@ -58,24 +58,24 @@
           <span class="pill"><i></i> Inspiring Change, Creating Futures</span>
           <h1>
             <span class="accent">R</span>eview together.<br />
-            Compete,<br />
+            <em>Compete</em> &amp; Win.
           </h1>
           <p class="lead">
             Quizian turns boring solo reviewing into a fun game with your friends and classmates.
             Quizzes, timed challenges, points and leaderboards — all in one platform.
           </p>
           <div class="hero__cta">
-            <a href="#cta" class="btn btn--primary">Start Reviewing</a>
-            <a href="#products" class="btn btn--ghost">See Features</a>
+            <a href="#demo" class="btn btn--primary">Start Reviewing</a>
+            <a href="#showcase" class="btn btn--ghost">Explore 3D App</a>
           </div>
           <ul class="hero__stats">
-            <li><strong data-count="4">0</strong><span>Quiz formats</span></li>
-            <li><strong data-count="4">0</strong><span>players max per challenge</span></li>
-            <li><strong data-count="100" data-suffix="%">0</strong><span>free to start</span></li>
+            <li><strong data-count="4">4</strong><span>Quiz formats</span></li>
+            <li><strong data-count="4">4</strong><span>Players max per challenge</span></li>
+            <li><strong data-count="100" data-suffix="%">100%</strong><span>Free to start</span></li>
           </ul>
         </div>
 
-        <!-- device mockups -->
+        <!-- Device Mockups -->
         <div class="devices" aria-hidden="true">
           <div class="tablet">
             <div class="tablet__bar">
@@ -123,20 +123,20 @@
         </div>
       </div>
 
-      <!-- quiz type strip -->
+      <!-- Quiz Type Strip -->
       <div class="container">
         <div class="strip">
-          <div class="strip__item"><span>☑</span>Multiple Choice</div>
-          <div class="strip__item"><span>✎</span>Fill in the Blank</div>
-          <div class="strip__item"><span>🔍</span>Identification</div>
-          <div class="strip__item"><span>🔀</span>Scrambled Words</div>
-          <div class="strip__item"><span>⏱</span>Timed Group Quiz</div>
-          <div class="strip__item"><span>🏆</span>Leaderboard</div>
+          <a href="#products" class="strip__item"><span>☑</span>Multiple Choice</a>
+          <a href="#products" class="strip__item"><span>✎</span>Fill in the Blank</a>
+          <a href="#products" class="strip__item"><span>🔍</span>Identification</a>
+          <a href="#products" class="strip__item"><span>🔀</span>Scrambled Words</a>
+          <a href="#products" class="strip__item"><span>⏱</span>Timed Group Quiz</a>
+          <a href="#products" class="strip__item"><span>🏆</span>Leaderboard</a>
         </div>
       </div>
     </section>
 
-    <!-- vibe marquee -->
+    <!-- Vibe Marquee -->
     <div class="marquee" aria-hidden="true">
       <div class="marquee__track">
         <span>🔥 Keep your streak</span><span>🏆 Top the leaderboard</span><span><span class="coin"></span> Earn coins</span><span>⚡ Beat the timer</span><span>🤝 Review with friends</span><span>🎮 Make studying a game</span>
@@ -144,95 +144,121 @@
       </div>
     </div>
 
-    <!-- ============ 3D ROTATING SCREENSHOT SHOWCASE (Section kept fully intact) ============ -->
+    <!-- ============ 2. 3D ROTATING SCREENSHOT SHOWCASE ============ -->
     <section class="showcase-3d" id="showcase">
       <div class="showcase-3d__glow" aria-hidden="true"></div>
       <div class="container">
         <div class="section__head reveal">
           <span class="eyebrow">Interactive 3D Showcase</span>
           <h2>Explore Quizian in <em>3D Rotation</em></h2>
-          <p>Drag, swipe, or hover to examine our core screens: My Quizzes, Home Dashboard, Activity, and Challenge lobbies.</p>
         </div>
 
         <div class="carousel-3d-wrapper reveal">
-          <div class="carousel-3d-scene" id="carouselScene" aria-label="3D Rotating Screenshot Showcase">
+          <div class="carousel-3d-scene" id="carouselScene" role="region" aria-roledescription="carousel" aria-label="3D Rotating Screenshot Showcase" tabindex="0">
             <div class="carousel-3d-track" id="carouselTrack">
-              <!-- Screenshot 1: My Quizzes -->
-              <div class="carousel-3d-item" data-index="0">
-                <img src="First1.jfif" alt="Quizian My Quizzes Screenshot" loading="lazy" />
+              <div class="carousel-3d-item is-active" data-index="0">
+                <img src="First1.jfif" alt="Quizian Home Dashboard Screenshot" />
                 <div class="carousel-3d-caption">
-                  1. My Quizzes <span>Quiz Creation &amp; Saved Decks</span>
+                  <strong>1. Home Dashboard</strong>
+                  <span>Quiz Creation &amp; Saved Decks</span>
                 </div>
               </div>
-              <!-- Screenshot 2: Home Dashboard -->
+
               <div class="carousel-3d-item" data-index="1">
-                <img src="Second2.jfif" alt="Quizian Home Dashboard Screenshot" loading="lazy" />
+                <img src="Second2.jfif" alt="Quizian My Quizzes Screenshot" />
                 <div class="carousel-3d-caption">
-                  2. Home Dashboard <span>Progress &amp; Quick Actions</span>
+                  <strong>2. My Quizzes</strong>
+                  <span>Progress &amp; Quick Actions</span>
                 </div>
               </div>
-              <!-- Screenshot 3: Activity -->
+
               <div class="carousel-3d-item" data-index="2">
-                <img src="Third3.jfif" alt="Quizian Activity Screenshot" loading="lazy" />
+                <img src="Third3.jfif" alt="Quizian Challenge Lobby Screenshot" />
                 <div class="carousel-3d-caption">
-                  3. Activity <span>Study History &amp; Accuracy</span>
+                  <strong>3. Challenge Lobby</strong>
+                  <span>Study History &amp; Accuracy</span>
                 </div>
               </div>
-              <!-- Screenshot 4: Challenge -->
+
               <div class="carousel-3d-item" data-index="3">
-                <img src="Fourth4.jfif" alt="Quizian Challenge Screenshot" loading="lazy" />
+                <img src="Fourth4.jfif" alt="Quizian Activity & Multiplayer Screenshot" />
                 <div class="carousel-3d-caption">
-                  4. Challenge <span>Multiplayer Lobbies &amp; Settings</span>
+                  <strong>4. Activity &amp; Lobbies</strong>
+                  <span>Multiplayer Lobbies &amp; Settings</span>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="carousel-3d-nav">
-            <button class="carousel-arrow" id="carouselPrev" aria-label="Previous screenshot">‹</button>
-            <div class="carousel-3d-dots" id="carouselDots">
-              <button class="carousel-dot active" data-index="0" aria-label="Go to slide 1"></button>
-              <button class="carousel-dot" data-index="1" aria-label="Go to slide 2"></button>
-              <button class="carousel-dot" data-index="2" aria-label="Go to slide 3"></button>
-              <button class="carousel-dot" data-index="3" aria-label="Go to slide 4"></button>
+            <button type="button" class="carousel-arrow" id="carouselPrev" aria-label="Previous screenshot">‹</button>
+            <div class="carousel-3d-dots" id="carouselDots" role="tablist" aria-label="Slide selector">
+              <button type="button" class="carousel-dot active" data-index="0" aria-label="Go to slide 1"></button>
+              <button type="button" class="carousel-dot" data-index="1" aria-label="Go to slide 2"></button>
+              <button type="button" class="carousel-dot" data-index="2" aria-label="Go to slide 3"></button>
+              <button type="button" class="carousel-dot" data-index="3" aria-label="Go to slide 4"></button>
             </div>
-            <button class="carousel-arrow" id="carouselNext" aria-label="Next screenshot">›</button>
+            <button type="button" class="carousel-arrow" id="carouselNext" aria-label="Next screenshot">›</button>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ============ PROMOTIONAL VIDEO SECTION (Section kept fully intact) ============ -->
+   <!-- ============ 3. PROMOTIONAL VIDEO SECTION ============ -->
     <section class="video-section" id="promo">
       <div class="container">
         <div class="section__head reveal">
           <span class="eyebrow">Walkthrough &amp; Preview</span>
           <h2>See Quizian in <em>Action</em></h2>
-          <p>Watch our 60-second promotional video to discover how Quizian transforms study sessions into engaging competitions.</p>
         </div>
 
-        <div class="video-container reveal">
-          <video id="promoVideo" src="Quizian_Promo_60s.mp4" preload="metadata" playsinline></video>
-          
+        <div class="video-container reveal" id="videoContainer">
+          <div class="video-stage" id="videoStage">
+            <video
+              id="promoVideo"
+              src="Quizian_Promo_60s_v5.mp4"
+              poster="First1.jfif"
+              preload="metadata"
+              muted
+              playsinline
+              controls
+            ></video>
+            <button type="button" class="video-big-play" id="bigPlayBtn" aria-label="Play promotional video">
+              <span class="video-big-play__icon">▶</span>
+            </button>
+          </div>
+
           <div class="video-controls-bar">
             <div class="video-controls-left">
-              <button class="v-btn" id="playPauseBtn" aria-label="Play/Pause">▶</button>
-              <button class="v-btn" id="replayBtn" aria-label="Replay">🔄</button>
-              <div class="video-progress-container" id="videoProgressContainer" aria-label="Video timeline">
-                <div class="video-progress-filled" id="videoProgressFilled"></div>
-              </div>
+              <button type="button" class="v-btn" id="playPauseBtn" aria-label="Play or Pause video">▶</button>
+              <button type="button" class="v-btn" id="replayBtn" aria-label="Replay video">↺</button>
               <span class="video-time" id="videoTimeDisplay">0:00 / 1:00</span>
             </div>
+
+            <div class="video-progress-container" id="videoProgressContainer" role="slider" tabindex="0" aria-label="Video timeline" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div class="video-progress-filled" id="videoProgressFilled"></div>
+            </div>
+
             <div class="video-controls-right">
-              <button class="v-btn" id="muteBtn" aria-label="Mute/Unmute">🔊</button>
-              <button class="v-btn" id="fullscreenBtn" aria-label="Fullscreen">⛶</button>
+              <button type="button" class="v-btn" id="muteBtn" aria-label="Unmute video" title="Unmute / Mute">🔇</button>
+              <input
+                type="range"
+                class="video-volume-slider"
+                id="volumeSlider"
+                min="0"
+                max="1"
+                step="0.05"
+                value="0"
+                aria-label="Video volume"
+              />
+              <button type="button" class="v-btn" id="fullscreenBtn" aria-label="Toggle Fullscreen">⛶</button>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ============ ABOUT US ============ -->
+    <!-- ============ 4. ABOUT US ============ -->
     <section class="section section--light" id="about">
       <div class="container">
         <div class="section__head reveal">
@@ -271,7 +297,7 @@
       </div>
     </section>
 
-    <!-- ============ PRODUCTS OR SERVICES ============ -->
+    <!-- ============ 5. PRODUCTS OR SERVICES ============ -->
     <section class="section section--dark" id="products">
       <div class="container">
         <div class="section__head reveal">
@@ -316,8 +342,8 @@
         <!-- ===== QUICK PLAY DEMO ===== -->
         <div class="demo reveal" id="demo">
           <div class="demo__info">
-            <span class="eyebrow">Try it</span>
-            <h3>Quick Play demo</h3>
+            <span class="eyebrow">Interactive Demo</span>
+            <h3>Quick Play Demo</h3>
             <p>Answer four sample questions, one of each quiz type, and see how Quizian rewards you.</p>
             <div class="demo__score">
               <span class="coin" aria-hidden="true"></span> Coins: <b id="coinsDisplay">0</b>
@@ -350,7 +376,7 @@
               <p class="demo__q">Water boils at <span class="blank"></span> degrees Celsius at sea level.</p>
               <p class="demo__hint">Type the missing number.</p>
               <form class="demo__form" data-question="2">
-                <input type="text" class="demo__input" id="answer2" placeholder="Type your answer…" autocomplete="off" aria-label="Your answer">
+                <input type="text" class="demo__input" id="answer2" placeholder="Type your answer…" autocomplete="off" aria-label="Your answer" />
                 <button type="submit" class="btn btn--primary btn--sm" id="submit2">Submit Answer</button>
               </form>
               <p class="demo__msg" id="feedback2" hidden></p>
@@ -361,23 +387,35 @@
               <p class="demo__q">Identify the term: the dense center of an atom that contains protons and neutrons.</p>
               <p class="demo__hint">Type the correct term.</p>
               <form class="demo__form" data-question="3">
-                <input type="text" class="demo__input" id="answer3" placeholder="Type your answer…" autocomplete="off" aria-label="Your answer">
+                <input type="text" class="demo__input" id="answer3" placeholder="Type your answer…" autocomplete="off" aria-label="Your answer" />
                 <button type="submit" class="btn btn--primary btn--sm" id="submit3">Submit Answer</button>
               </form>
               <p class="demo__msg" id="feedback3" hidden></p>
               <button type="button" class="btn btn--primary btn--sm demo__next" id="next3" hidden>Next question →</button>
             </div>
 
+            <!-- Question 4: Clickable Letter Tiles Scrambled Words -->
             <div class="question" id="question4" hidden>
-              <p class="demo__q">Rearrange the letters to form the correct word.</p>
-              <div class="tiles">
-                <span>T</span><span>N</span><span>A</span><span>L</span><span>P</span>
-              </div>
+              <p class="demo__q">Tap the scrambled letters in the right order to spell the word.</p>
               <p class="demo__hint">Clue: a living thing that makes its own food from sunlight.</p>
-              <form class="demo__form" data-question="4">
-                <input type="text" class="demo__input" id="answer4" placeholder="Type your answer…" autocomplete="off" aria-label="Your answer">
-                <button type="submit" class="btn btn--primary btn--sm" id="submit4">Submit Answer</button>
-              </form>
+
+              <div class="scramble-game" id="scrambleGame">
+                <div class="scramble-answer-wrap">
+                  <span class="scramble-label">Your Answer (tap a placed letter to remove):</span>
+                  <div class="scramble-slots" id="scrambleAnswerSlots" role="group" aria-label="Selected letters answer area"></div>
+                </div>
+
+                <div class="scramble-bank-wrap">
+                  <span class="scramble-label">Scrambled Letters:</span>
+                  <div class="tiles scramble-bank" id="scrambleLetterBank" role="group" aria-label="Available scrambled letters"></div>
+                </div>
+
+                <div class="scramble-actions">
+                  <button type="button" class="btn btn--primary btn--sm" id="submit4">Submit Answer</button>
+                  <button type="button" class="scramble-clear-btn" id="clearScrambleBtn">Clear</button>
+                </div>
+              </div>
+
               <p class="demo__msg" id="feedback4" hidden></p>
               <button type="button" class="btn btn--primary btn--sm demo__next" id="next4" hidden>See my results →</button>
             </div>
@@ -391,13 +429,12 @@
               </div>
               <button type="button" class="btn btn--primary btn--sm" id="restartButton">Restart Demo ↻</button>
             </div>
-
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ============ HOW IT WORKS ============ -->
+    <!-- ============ 6. HOW IT WORKS ============ -->
     <section class="section section--light" id="how">
       <div class="container">
         <div class="section__head reveal">
@@ -407,27 +444,27 @@
         <div class="steps">
           <div class="step reveal"><b>1</b><h3>Upload &amp; Create</h3><p>Drop your study file, choose the number of questions, difficulty and quiz types, then generate.</p></div>
           <div class="step reveal"><b>2</b><h3>Challenge a Friend</h3><p>Pick a quiz, set the time limit and share your join code with classmates.</p></div>
-          <div class="step reveal"><b>3</b><h3>Compete &amp; Earn Coins</h3><p>Earn coins, to rise on the leaderboard.</p></div>
+          <div class="step reveal"><b>3</b><h3>Compete &amp; Earn Coins</h3><p>Earn coins for every right answer and rise on the leaderboard.</p></div>
         </div>
       </div>
     </section>
 
-    <!-- ============ CALL TO ACTION (CTA) ============ -->
+    <!-- ============ 7. CALL TO ACTION (CTA) ============ -->
     <section class="cta" id="cta">
       <div class="container">
         <div class="cta__box reveal">
-          <div class="cta__glow"></div>
+          <div class="cta__glow" aria-hidden="true"></div>
           <h2>Ready to make reviewing fun?</h2>
           <p>Join Quizian for free and turn your next study session into a challenge.</p>
           <div class="cta__btns">
             <a href="#contact" class="btn btn--light">Contact Us</a>
-            <a href="#products" class="btn btn--outline">Learn More</a>
+            <a href="#demo" class="btn btn--outline">Try Quick Play</a>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ============ CONTACT INFO & SIMPLE FORM ============ -->
+    <!-- ============ 8. CONTACT INFO & FORM ============ -->
     <section class="section section--dark" id="contact">
       <div class="container">
         <div class="section__head reveal">
@@ -442,19 +479,37 @@
             <ul>
               <li><span>📍</span><div><b>Address</b><br />Institute of Computing, Davao del Norte State College, Panabo City</div></li>
               <li><span>✉️</span><div><b>Email</b><br /><a href="mailto:matteollanora@gmail.com">matteollanora@gmail.com</a></div></li>
-              <li><span>📞</span><div><b>Phone</b><br />+63 0930 184 5093</div></li>
-              <li><span>🌐</span><div><b>Social</b><br />Facebook · Instagram · TikTok <small>(@quizian)</small></div></li>
+              <li><span>📞</span><div><b>Phone</b><br /><a href="tel:+639301845093">+63 0930 184 5093</a></div></li>
+              <li>
+                <span>🌐</span>
+                <div>
+                  <b>Social Media</b><br />
+                  <div class="social-links">
+                    <a
+                      href="https://www.facebook.com/profile.php?id=61596319590062"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="social-link social-link--fb"
+                      aria-label="Visit Quizian on Facebook"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
+                      </svg>
+                      <span>Facebook</span>
+                    </a>
+                  </div>
+                </div>
+              </li>
               <li><span>🕘</span><div><b>Hours</b><br />Mon – Fri, 8:00 AM – 5:00 PM</div></li>
             </ul>
           </div>
 
-          <!-- Fully functional form configured with Web3Forms -->
           <form class="form reveal" id="contactForm" action="https://api.web3forms.com/submit" method="POST" novalidate>
             <h3>Send us a message</h3>
 
-            <input type="hidden" name="apikey" value="YOUR_ACCESS_KEY_HERE">
-            <input type="hidden" name="subject" value="New Inquiry from Quizian Website">
-            <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+            <input type="hidden" name="apikey" value="YOUR_ACCESS_KEY_HERE" />
+            <input type="hidden" name="subject" value="New Inquiry from Quizian Website" />
+            <input type="checkbox" name="botcheck" style="display: none;" tabindex="-1" autocomplete="off" />
 
             <div class="field">
               <label for="name">Full Name</label>
@@ -488,7 +543,7 @@
       </div>
     </section>
 
-    <!-- ============ MEET THE TEAM (Section kept fully intact) ============ -->
+    <!-- ============ 9. MEET THE TEAM ============ -->
     <section class="section section--light" id="team">
       <div class="container">
         <div class="section__head reveal">
@@ -499,7 +554,7 @@
         <div class="team">
           <div class="member reveal">
             <div class="avatar">
-              <img src="jas.3.jfif" alt="Jasem Madidis" />
+              <img src="jas.3.jfif" alt="Jasem Madidis" loading="lazy" />
             </div>
             <h4>Jasem Madidis</h4>
             <span>Project Manager</span>
@@ -507,7 +562,7 @@
           </div>
           <div class="member reveal">
             <div class="avatar">
-              <img src="stev.2.jfif" alt="Steve Owein Presidente" />
+              <img src="stev.2.jfif" alt="Steve Owein Presidente" loading="lazy" />
             </div>
             <h4>Steve Owein Presidente</h4>
             <span>System Analyst</span>
@@ -515,7 +570,7 @@
           </div>
           <div class="member reveal">
             <div class="avatar">
-              <img src="mat.1.jfif" alt="Matteo Lianora" />
+              <img src="mat.1.jfif" alt="Matteo Lianora" loading="lazy" />
             </div>
             <h4>Matteo Lianora</h4>
             <span>Programmer</span>
@@ -531,14 +586,34 @@
     <div class="container footer__inner">
       <div>
         <a href="#home" class="brand">
-          <img class="brand__logo" src="download.jfif" alt="" width="42" height="42" />
+          <img class="brand__logo" src="download.jfif" alt="Quizian Logo" width="42" height="42" />
           <span>Quizian</span>
         </a>
-        <p>Review together. Compete together.</p>
+        <p>Learn Together. Grow Together.</p>
       </div>
-      <nav class="footer__links" aria-label="Footer">
-        <a href="#home">Home</a><a href="#about">About</a><a href="#products">Products</a><a href="#contact">Contact</a>
-      </nav>
+      <div class="footer__nav-group">
+        <nav class="footer__links" aria-label="Footer Navigation">
+          <a href="#home">Home</a>
+          <a href="#about">About</a>
+          <a href="#products">Products</a>
+          <a href="#how">How it Works</a>
+          <a href="#contact">Contact</a>
+        </nav>
+        <div class="footer__social">
+          <a
+            href="https://www.facebook.com/profile.php?id=61596319590062"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link social-link--fb"
+            aria-label="Quizian Official Facebook Page"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
+            </svg>
+            <span>Follow on Facebook</span>
+          </a>
+        </div>
+      </div>
       <p class="footer__copy">© <span id="year"></span> Quizian · Institute of Computing, DNSC</p>
     </div>
   </footer>
