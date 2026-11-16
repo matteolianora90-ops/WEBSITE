@@ -1,4 +1,4 @@
-/* ===== Quizian website scripts ===== */
+/* ===== Quizian Website Scripts ===== */
 (function () {
   "use strict";
 
@@ -7,112 +7,139 @@
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 
-  /* ---------- Navbar: scroll style, mobile menu, active link ---------- */
+  /* ---------- 1. Navbar: Scroll State, Mobile Drawer & Scroll-Spy ---------- */
   const nav = $("#nav");
   const burger = $("#burger");
   const links = $("#navLinks");
-  const navLinks = $$("a", links);
+  const navLinks = links ? $$("a", links) : [];
 
-  window.addEventListener("scroll", () => nav.classList.toggle("scrolled", window.scrollY > 30));
+  function setMenuOpen(isOpen) {
+    if (!links || !burger) return;
+    links.classList.toggle("open", isOpen);
+    burger.classList.toggle("open", isOpen);
+    burger.setAttribute("aria-expanded", String(isOpen));
+  }
 
-  burger.addEventListener("click", () => {
-    const open = links.classList.toggle("open");
-    burger.classList.toggle("open", open);
-    burger.setAttribute("aria-expanded", open);
-  });
+  if (burger && links) {
+    burger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      setMenuOpen(!links.classList.contains("open"));
+    });
 
-  navLinks.forEach(a => {
+    document.addEventListener("click", (e) => {
+      if (links.classList.contains("open") && !nav.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && links.classList.contains("open")) {
+        setMenuOpen(false);
+        burger.focus();
+      }
+    });
+  }
+
+  navLinks.forEach((a) => {
     a.addEventListener("click", () => {
-      links.classList.remove("open");
-      burger.classList.remove("open");
-      burger.setAttribute("aria-expanded", "false");
-
-      navLinks.forEach(link => link.classList.remove("active"));
+      setMenuOpen(false);
+      navLinks.forEach((link) => link.classList.remove("active"));
       a.classList.add("active");
     });
   });
 
-  const targetSections = ["#home", "#about", "#products", "#how", "#contact"].map(sel => $(sel)).filter(Boolean);
-  const spy = new IntersectionObserver(
-    entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          const id = e.target.getAttribute("id");
-          navLinks.forEach(a => {
-            if (a.getAttribute("href") === "#" + id) {
-              a.classList.add("active");
-            } else {
-              a.classList.remove("active");
-            }
-          });
-        }
-      });
-    },
-    { rootMargin: "-30% 0px -50% 0px" }
-  );
-  targetSections.forEach(s => spy.observe(s));
+  const spySectionIds = navLinks
+    .map((a) => a.getAttribute("href"))
+    .filter((href) => href && href.startsWith("#"));
+  const targetSections = spySectionIds.map((sel) => $(sel)).filter(Boolean);
 
-  /* ---------- Scroll reveal ---------- */
+  function updateActiveNavOnScroll() {
+    if (!targetSections.length) return;
+    const scrollPos = window.scrollY + 140;
+    let currentId = targetSections[0].id;
+
+    for (const sec of targetSections) {
+      if (scrollPos >= sec.offsetTop) {
+        currentId = sec.id;
+      }
+    }
+
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 40) {
+      currentId = targetSections[targetSections.length - 1].id;
+    }
+
+    navLinks.forEach((a) => {
+      a.classList.toggle("active", a.getAttribute("href") === `#${currentId}`);
+    });
+  }
+
+  /* ---------- 2. Scroll Reveal & Count-Up Stats ---------- */
   const revealObs = new IntersectionObserver(
-    entries =>
-      entries.forEach(e => {
+    (entries) => {
+      entries.forEach((e) => {
         if (e.isIntersecting) {
           e.target.classList.add("visible");
           const t = e.target;
-          setTimeout(() => (t.style.transitionDelay = ""), 1000);
+          setTimeout(() => (t.style.transitionDelay = ""), 900);
           revealObs.unobserve(e.target);
         }
-      }),
-    { threshold: 0.12 }
+      });
+    },
+    { threshold: 0.1 }
   );
+
   $$(".reveal").forEach((el, i) => {
     el.style.transitionDelay = (i % 3) * 0.08 + "s";
     revealObs.observe(el);
   });
 
-  /* ---------- Count-up stats ---------- */
   const countObs = new IntersectionObserver(
-    entries =>
-      entries.forEach(e => {
+    (entries) => {
+      entries.forEach((e) => {
         if (!e.isIntersecting) return;
         const el = e.target;
-        const end = +el.dataset.count;
+        const end = Number(el.dataset.count) || 0;
+        const suffix = el.dataset.suffix || "";
         let n = 0;
-        const step = Math.max(1, Math.ceil(end / 40));
-        const t = setInterval(() => {
+        const step = Math.max(1, Math.ceil(end / 35));
+        const timer = setInterval(() => {
           n = Math.min(end, n + step);
-          el.textContent = n + (el.dataset.suffix || "");
-          if (n >= end) clearInterval(t);
+          el.textContent = n + suffix;
+          if (n >= end) clearInterval(timer);
         }, 30);
         countObs.unobserve(el);
-      }),
-    { threshold: 0.6 }
+      });
+    },
+    { threshold: 0.5 }
   );
-  $$("[data-count]").forEach(el => countObs.observe(el));
 
-  /* =====================================================
-     3D ROTATING SCREENSHOT CAROUSEL
-     ===================================================== */
+  $$("[data-count]").forEach((el) => countObs.observe(el));
+
+  /* ---------- 3. 3D Rotating Screenshot Carousel ---------- */
   const track = $("#carouselTrack");
-  const items = $$(".carousel-3d-item", track);
+  const items = track ? $$(".carousel-3d-item", track) : [];
   const dots = $$(".carousel-dot");
   const prevBtn = $("#carouselPrev");
   const nextBtn = $("#carouselNext");
   const scene = $("#carouselScene");
 
-  if (track && items.length > 0) {
+  if (track && scene && items.length > 0) {
     let currentAngle = 0;
     let targetAngle = 0;
     let isDragging = false;
+    let dragMoved = false;
     let startX = 0;
-    let currentX = 0;
+    let lastX = 0;
     let autoRotateTimer = null;
     let isHovered = false;
+    let isSceneVisible = true;
     const totalItems = items.length;
     const angleStep = 360 / totalItems;
 
     function getRadius() {
-      return window.innerWidth < 768 ? 260 : 500;
+      const cardWidth = items[0].offsetWidth || (window.innerWidth < 640 ? 310 : 540);
+      const apothem = cardWidth / (2 * Math.tan(Math.PI / totalItems));
+      return Math.round(apothem + (window.innerWidth < 640 ? 28 : 55));
     }
 
     function updateCarouselLayout() {
@@ -123,61 +150,113 @@
       });
     }
 
-    function updateTrackTransform() {
-      track.style.transform = `rotateY(${currentAngle}deg)`;
-      
-      let normalized = (-currentAngle % 360);
+    function getActiveIndex(angle) {
+      let normalized = -angle % 360;
       if (normalized < 0) normalized += 360;
-      let activeIdx = Math.round(normalized / angleStep) % totalItems;
-      
+      return Math.round(normalized / angleStep) % totalItems;
+    }
+
+    function updateTrackTransform() {
+      track.style.transform = `translateZ(${-getRadius()}px) rotateY(${currentAngle}deg)`;
+      const activeIdx = getActiveIndex(targetAngle);
+
+      items.forEach((item, idx) => {
+        item.classList.toggle("is-active", idx === activeIdx);
+      });
+
       dots.forEach((dot, idx) => {
         dot.classList.toggle("active", idx === activeIdx);
+        dot.setAttribute("aria-selected", String(idx === activeIdx));
       });
     }
 
     function animateCarousel() {
-      currentAngle += (targetAngle - currentAngle) * 0.08;
+      currentAngle += (targetAngle - currentAngle) * 0.1;
       updateTrackTransform();
       requestAnimationFrame(animateCarousel);
+    }
+
+    function goToSlide(index) {
+      const currentIdx = getActiveIndex(targetAngle);
+      let diff = index - currentIdx;
+      if (diff > totalItems / 2) diff -= totalItems;
+      if (diff < -totalItems / 2) diff += totalItems;
+      targetAngle -= diff * angleStep;
+      startAutoRotate();
     }
 
     function startAutoRotate() {
       if (autoRotateTimer) clearInterval(autoRotateTimer);
       autoRotateTimer = setInterval(() => {
-        if (!isHovered && !isDragging) {
+        if (!isHovered && !isDragging && isSceneVisible && !document.hidden) {
           targetAngle -= angleStep;
         }
-      }, 4000);
+      }, 4200);
     }
 
-    scene.addEventListener("pointerdown", e => {
+    const carouselVisObs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          isSceneVisible = e.isIntersecting;
+        });
+      },
+      { threshold: 0.15 }
+    );
+    carouselVisObs.observe(scene);
+
+    scene.addEventListener("pointerdown", (e) => {
       isDragging = true;
+      dragMoved = false;
       startX = e.clientX;
-      currentX = startX;
+      lastX = startX;
       scene.setPointerCapture(e.pointerId);
     });
 
-    scene.addEventListener("pointermove", e => {
+    scene.addEventListener("pointermove", (e) => {
       if (!isDragging) return;
-      const deltaX = e.clientX - currentX;
-      currentX = e.clientX;
-      targetAngle += deltaX * 0.4;
+      const deltaX = e.clientX - lastX;
+      if (Math.abs(e.clientX - startX) > 6) dragMoved = true;
+      lastX = e.clientX;
+      targetAngle += deltaX * 0.35;
     });
 
-    scene.addEventListener("pointerup", e => {
+    function endDrag() {
       if (!isDragging) return;
       isDragging = false;
       targetAngle = -Math.round(-targetAngle / angleStep) * angleStep;
       startAutoRotate();
+    }
+
+    scene.addEventListener("pointerup", endDrag);
+    scene.addEventListener("pointercancel", endDrag);
+
+    items.forEach((item, idx) => {
+      item.addEventListener("click", () => {
+        if (!dragMoved) {
+          goToSlide(idx);
+        }
+      });
     });
 
-    scene.addEventListener("pointercancel", () => {
-      isDragging = false;
-      startAutoRotate();
+    scene.addEventListener("mouseenter", () => {
+      isHovered = true;
     });
 
-    scene.addEventListener("mouseenter", () => { isHovered = true; });
-    scene.addEventListener("mouseleave", () => { isHovered = false; });
+    scene.addEventListener("mouseleave", () => {
+      isHovered = false;
+    });
+
+    scene.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        targetAngle += angleStep;
+        startAutoRotate();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        targetAngle -= angleStep;
+        startAutoRotate();
+      }
+    });
 
     if (prevBtn) {
       prevBtn.addEventListener("click", () => {
@@ -193,11 +272,10 @@
       });
     }
 
-    dots.forEach(dot => {
+    dots.forEach((dot) => {
       dot.addEventListener("click", () => {
-        const idx = +dot.dataset.index;
-        targetAngle = -idx * angleStep;
-        startAutoRotate();
+        const idx = Number(dot.dataset.index);
+        goToSlide(idx);
       });
     });
 
@@ -208,140 +286,530 @@
     startAutoRotate();
   }
 
-  /* =====================================================
-     QUICK PLAY DEMO
-     ===================================================== */
-  var totalQuestions = 4;
-  var coinsPerCorrectAnswer = 10;
-  var currentQuestion = 0;
-  var coins = 0;
-  var score = 0;
-  var alreadyAnswered = [false, false, false, false];
-  var questionTypes = ["Multiple Choice", "Fill in the Blanks", "Identification", "Scramble Words"];
-  var correctAnswerText = ["B. Chlorophyll", "100", "Nucleus", "PLANT"];
-  var explanations = [
+  /* ---------- 4. Promotional Video Player (Viewport & Tab Visibility Controlled) ---------- */
+  const video = $("#promoVideo");
+  const bigPlayBtn = $("#bigPlayBtn");
+  const playPauseBtn = $("#playPauseBtn");
+  const muteBtn = $("#muteBtn");
+  const volumeSlider = $("#volumeSlider");
+  const fullscreenBtn = $("#fullscreenBtn");
+  const replayBtn = $("#replayBtn");
+  const videoProgressContainer = $("#videoProgressContainer");
+  const videoProgressFilled = $("#videoProgressFilled");
+  const videoTimeDisplay = $("#videoTimeDisplay");
+  const videoContainer = $("#videoContainer");
+
+  if (video) {
+    let userPaused = false;
+    let isVideoVisible = false;
+    let isSystemPausing = false;
+    let hasStartedOnce = false;
+    let lastNonZeroVolume = 0.85;
+
+    // Start muted to satisfy browser autoplay rules
+    video.muted = true;
+    video.defaultMuted = true;
+
+    function formatTime(seconds) {
+      if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      return `${m}:${s < 10 ? "0" : ""}${s}`;
+    }
+
+    function syncPlayState() {
+      const isPaused = video.paused || video.ended;
+      if (playPauseBtn) playPauseBtn.textContent = isPaused ? "▶" : "⏸";
+      if (bigPlayBtn) bigPlayBtn.classList.toggle("is-hidden", !isPaused);
+    }
+
+    function syncAudioState() {
+      const effectiveMuted = video.muted || video.volume === 0;
+      if (muteBtn) {
+        muteBtn.textContent = effectiveMuted ? "🔇" : "🔊";
+        muteBtn.setAttribute("aria-label", effectiveMuted ? "Unmute video" : "Mute video");
+      }
+      if (volumeSlider) {
+        volumeSlider.value = effectiveMuted ? "0" : String(video.volume);
+      }
+    }
+
+    function pauseForVisibilityChange() {
+      if (!video.paused) {
+        isSystemPausing = true;
+        video.pause();
+      }
+    }
+
+    function playWhenVisible() {
+      if (userPaused || document.hidden || !isVideoVisible || video.ended) return;
+      if (!video.paused) return;
+
+      // Only enforce muted state on the very first automatic start;
+      // preserve user's unmute choice if autoplay succeeds afterward,
+      // falling back to muted if the browser rejects unmuted resume.
+      if (!hasStartedOnce) {
+        video.muted = true;
+      }
+
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            hasStartedOnce = true;
+            syncPlayState();
+            syncAudioState();
+          })
+          .catch(() => {
+            // If browser blocks unmuted resume, retry muted so video still resumes smoothly
+            if (!video.muted) {
+              video.muted = true;
+              syncAudioState();
+              video.play()
+                .then(() => {
+                  hasStartedOnce = true;
+                  syncPlayState();
+                })
+                .catch(() => {
+                  syncPlayState();
+                });
+            } else {
+              syncPlayState();
+            }
+          });
+      }
+    }
+
+    function toggleVideoPlayback() {
+      if (video.paused || video.ended) {
+        userPaused = false;
+        video.play()
+          .then(() => {
+            hasStartedOnce = true;
+          })
+          .catch(() => {});
+      } else {
+        userPaused = true;
+        video.pause();
+      }
+    }
+
+    // Observe the video container so playback strictly matches viewport visibility
+    const observeTarget = videoContainer || video;
+    const videoVisibilityObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isVideoVisible = entry.isIntersecting && entry.intersectionRatio >= 0.45;
+          if (isVideoVisible) {
+            playWhenVisible();
+          } else {
+            pauseForVisibilityChange();
+          }
+        });
+      },
+      {
+        threshold: [0, 0.25, 0.45, 0.75]
+      }
+    );
+    videoVisibilityObserver.observe(observeTarget);
+
+    // Pause when tab/window becomes hidden; resume when active only if visible & not manually paused
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        pauseForVisibilityChange();
+      } else if (isVideoVisible && !userPaused) {
+        playWhenVisible();
+      }
+    });
+
+    video.addEventListener("loadedmetadata", () => {
+      if (videoTimeDisplay) {
+        videoTimeDisplay.textContent = `0:00 / ${formatTime(video.duration)}`;
+      }
+    });
+
+    if (bigPlayBtn) {
+      bigPlayBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        userPaused = false;
+        video.play()
+          .then(() => {
+            hasStartedOnce = true;
+          })
+          .catch(() => {});
+      });
+    }
+
+    if (playPauseBtn) {
+      playPauseBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleVideoPlayback();
+      });
+    }
+
+    // Sync state when played/paused via either custom buttons or native HTML5 video controls
+    video.addEventListener("play", () => {
+      isSystemPausing = false;
+      userPaused = false;
+      hasStartedOnce = true;
+      // Guard against edge-case manual play while scrolled out of view
+      if (!isVideoVisible || document.hidden) {
+        pauseForVisibilityChange();
+        return;
+      }
+      syncPlayState();
+    });
+
+    video.addEventListener("pause", () => {
+      if (isSystemPausing) {
+        // Automatic pause due to scrolling offscreen or tab switch: keep userPaused false
+        isSystemPausing = false;
+      } else if (!video.ended) {
+        // Intentional manual pause by the user
+        userPaused = true;
+      }
+      syncPlayState();
+    });
+
+    video.addEventListener("ended", () => {
+      userPaused = true;
+      syncPlayState();
+    });
+
+    video.addEventListener("volumechange", syncAudioState);
+
+    if (muteBtn) {
+      muteBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (video.muted || video.volume === 0) {
+          video.muted = false;
+          video.volume = lastNonZeroVolume > 0 ? lastNonZeroVolume : 0.85;
+        } else {
+          lastNonZeroVolume = video.volume;
+          video.muted = true;
+        }
+        syncAudioState();
+      });
+    }
+
+    if (volumeSlider) {
+      volumeSlider.addEventListener("input", (e) => {
+        const val = Number(e.target.value);
+        video.volume = val;
+        if (val > 0) {
+          lastNonZeroVolume = val;
+          video.muted = false;
+        } else {
+          video.muted = true;
+        }
+        syncAudioState();
+      });
+    }
+
+    if (fullscreenBtn) {
+      fullscreenBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const target = videoContainer || video;
+        if (document.fullscreenElement) {
+          document.exitFullscreen().catch(() => {});
+        } else if (target.requestFullscreen) {
+          target.requestFullscreen().catch(() => {});
+        } else if (video.webkitEnterFullscreen) {
+          video.webkitEnterFullscreen();
+        }
+      });
+    }
+
+    if (replayBtn) {
+      replayBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        userPaused = false;
+        video.currentTime = 0;
+        video.play()
+          .then(() => {
+            hasStartedOnce = true;
+          })
+          .catch(() => {});
+      });
+    }
+
+    video.addEventListener("timeupdate", () => {
+      const current = video.currentTime;
+      const duration = Number.isFinite(video.duration) && video.duration > 0 ? video.duration : 60;
+      const percent = Math.min(100, (current / duration) * 100);
+      if (videoProgressFilled) videoProgressFilled.style.width = `${percent}%`;
+      if (videoProgressContainer) {
+        videoProgressContainer.setAttribute("aria-valuenow", String(Math.round(percent)));
+      }
+      if (videoTimeDisplay) {
+        videoTimeDisplay.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+      }
+    });
+
+    if (videoProgressContainer) {
+      videoProgressContainer.addEventListener("click", (e) => {
+        if (!Number.isFinite(video.duration) || video.duration <= 0) return;
+        const rect = videoProgressContainer.getBoundingClientRect();
+        const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        video.currentTime = pos * video.duration;
+      });
+    }
+
+    syncPlayState();
+    syncAudioState();
+  }
+
+  /* ---------- 5. Quick Play Demo (Including Clickable Scrambled Words) ---------- */
+  const totalQuestions = 4;
+  const coinsPerCorrectAnswer = 10;
+  let currentQuestion = 0;
+  let coins = 0;
+  let score = 0;
+  const alreadyAnswered = [false, false, false, false];
+  const questionTypes = ["Multiple Choice", "Fill in the Blanks", "Identification", "Scrambled Words"];
+  const correctAnswerText = ["B. Chlorophyll", "100", "Nucleus", "PLANT"];
+  const explanations = [
     "Chlorophyll is the green pigment in leaves that captures sunlight so the plant can make its food.",
     "At sea level, water reaches its boiling point at 100 degrees Celsius.",
     "The nucleus holds the protons and neutrons, which make up almost all of an atom's mass.",
     "T-N-A-L-P rearranged spells PLANT."
   ];
 
-  var questionNumberText = document.getElementById("questionNumber");
-  var questionTypeText = document.getElementById("questionType");
-  var progressFill = document.getElementById("progressFill");
-  var coinsDisplay = document.getElementById("coinsDisplay");
-  var resultsBox = document.getElementById("results");
+  const questionNumberText = $("#questionNumber");
+  const questionTypeText = $("#questionType");
+  const progressFill = $("#progressFill");
+  const coinsDisplay = $("#coinsDisplay");
+  const resultsBox = $("#results");
+  const questionBoxes = $$(".question");
+  const optionButtons = $$(".demo__opt");
+  const answerForms = $$(".demo__form");
+  const nextButtons = $$(".demo__next");
 
-  var questionBoxes = document.querySelectorAll(".question");
-  var optionButtons = document.querySelectorAll(".demo__opt");
-  var answerForms = document.querySelectorAll(".demo__form");
-  var nextButtons = document.querySelectorAll(".demo__next");
+  /* -- Scrambled Words Clickable Tile Engine -- */
+  const scrambleTargetWord = "PLANT";
+  const scrambleLetters = ["T", "N", "A", "L", "P"];
+  let scrambleSlotsState = Array(scrambleTargetWord.length).fill(null);
 
-  function showQuestion() {
-    for (var i = 0; i < questionBoxes.length; i++) {
-      questionBoxes[i].hidden = true;
+  const scrambleAnswerSlotsEl = $("#scrambleAnswerSlots");
+  const scrambleLetterBankEl = $("#scrambleLetterBank");
+  const submit4Btn = $("#submit4");
+  const clearScrambleBtn = $("#clearScrambleBtn");
+
+  function renderScrambleGame() {
+    if (!scrambleAnswerSlotsEl || !scrambleLetterBankEl) return;
+
+    const locked = alreadyAnswered[3];
+
+    scrambleAnswerSlotsEl.innerHTML = "";
+    scrambleSlotsState.forEach((entry, slotIndex) => {
+      const slotBtn = document.createElement("button");
+      slotBtn.type = "button";
+      slotBtn.className = entry ? "scramble-slot is-filled" : "scramble-slot";
+      slotBtn.textContent = entry ? entry.letter : "";
+      slotBtn.disabled = locked || !entry;
+      slotBtn.setAttribute(
+        "aria-label",
+        entry
+          ? `Selected letter ${entry.letter} at position ${slotIndex + 1}. Tap to remove.`
+          : `Empty letter slot ${slotIndex + 1}`
+      );
+
+      if (entry && !locked) {
+        slotBtn.addEventListener("click", () => {
+          scrambleSlotsState[slotIndex] = null;
+          const fb4 = $("#feedback4");
+          if (fb4 && fb4.classList.contains("warn")) {
+            fb4.hidden = true;
+          }
+          renderScrambleGame();
+        });
+      }
+
+      scrambleAnswerSlotsEl.appendChild(slotBtn);
+    });
+
+    const usedTileIndices = new Set(
+      scrambleSlotsState.filter(Boolean).map((entry) => entry.tileIndex)
+    );
+
+    scrambleLetterBankEl.innerHTML = "";
+    scrambleLetters.forEach((letter, tileIndex) => {
+      const isSelected = usedTileIndices.has(tileIndex);
+      const tileBtn = document.createElement("button");
+      tileBtn.type = "button";
+      tileBtn.className = isSelected ? "scramble-tile is-selected" : "scramble-tile";
+      tileBtn.textContent = letter;
+      tileBtn.disabled = locked || isSelected;
+      tileBtn.setAttribute("aria-pressed", String(isSelected));
+      tileBtn.setAttribute(
+        "aria-label",
+        isSelected ? `Letter ${letter} already selected` : `Select letter ${letter}`
+      );
+
+      if (!isSelected && !locked) {
+        tileBtn.addEventListener("click", () => {
+          const nextEmptyIndex = scrambleSlotsState.indexOf(null);
+          if (nextEmptyIndex === -1) return;
+          scrambleSlotsState[nextEmptyIndex] = { tileIndex, letter };
+          const fb4 = $("#feedback4");
+          if (fb4 && fb4.classList.contains("warn")) {
+            fb4.hidden = true;
+          }
+          renderScrambleGame();
+        });
+      }
+
+      scrambleLetterBankEl.appendChild(tileBtn);
+    });
+
+    if (clearScrambleBtn) {
+      const hasAnySelection = scrambleSlotsState.some(Boolean);
+      clearScrambleBtn.disabled = locked || !hasAnySelection;
     }
-    questionBoxes[currentQuestion].hidden = false;
-    questionNumberText.textContent = "Question " + (currentQuestion + 1) + " of " + totalQuestions;
-    questionTypeText.textContent = questionTypes[currentQuestion];
-    updateProgressBar();
+  }
+
+  function resetScrambleState() {
+    scrambleSlotsState = Array(scrambleTargetWord.length).fill(null);
+    if (scrambleAnswerSlotsEl) {
+      scrambleAnswerSlotsEl.classList.remove("is-correct", "is-wrong");
+    }
+    if (submit4Btn) submit4Btn.disabled = false;
+    renderScrambleGame();
+  }
+
+  function checkScrambledAnswer() {
+    if (alreadyAnswered[3]) return;
+    const feedback = $("#feedback4");
+    if (!feedback) return;
+
+    if (scrambleSlotsState.some((slot) => slot === null)) {
+      feedback.className = "demo__msg warn";
+      feedback.textContent = "Please tap all 5 letters to complete the word before submitting.";
+      feedback.hidden = false;
+      return;
+    }
+
+    const assembledWord = scrambleSlotsState.map((entry) => entry.letter).join("");
+    const isCorrect = assembledWord === scrambleTargetWord;
+
+    if (scrambleAnswerSlotsEl) {
+      scrambleAnswerSlotsEl.classList.add(isCorrect ? "is-correct" : "is-wrong");
+    }
+    if (submit4Btn) submit4Btn.disabled = true;
+
+    finishQuestion(3, isCorrect);
+    renderScrambleGame();
+  }
+
+  if (submit4Btn) {
+    submit4Btn.addEventListener("click", checkScrambledAnswer);
+  }
+
+  if (clearScrambleBtn) {
+    clearScrambleBtn.addEventListener("click", () => {
+      if (alreadyAnswered[3]) return;
+      scrambleSlotsState = Array(scrambleTargetWord.length).fill(null);
+      const fb4 = $("#feedback4");
+      if (fb4) fb4.hidden = true;
+      renderScrambleGame();
+    });
   }
 
   function updateProgressBar() {
-    var answeredCount = 0;
-    for (var i = 0; i < alreadyAnswered.length; i++) {
-      if (alreadyAnswered[i] === true) {
-        answeredCount = answeredCount + 1;
-      }
+    if (!progressFill) return;
+    const answeredCount = alreadyAnswered.filter(Boolean).length;
+    progressFill.style.width = `${(answeredCount / totalQuestions) * 100}%`;
+  }
+
+  function showQuestion() {
+    if (!questionBoxes.length) return;
+    questionBoxes.forEach((box) => (box.hidden = true));
+    questionBoxes[currentQuestion].hidden = false;
+    if (questionNumberText) {
+      questionNumberText.textContent = `Question ${currentQuestion + 1} of ${totalQuestions}`;
     }
-    var percent = (answeredCount / totalQuestions) * 100;
-    progressFill.style.width = percent + "%";
+    if (questionTypeText) {
+      questionTypeText.textContent = questionTypes[currentQuestion];
+    }
+    if (currentQuestion === 3 && !alreadyAnswered[3]) {
+      resetScrambleState();
+    }
+    updateProgressBar();
   }
 
   function finishQuestion(questionIndex, isCorrect) {
-    var questionNumber = questionIndex + 1;
-    var feedback = document.getElementById("feedback" + questionNumber);
-    var nextButton = document.getElementById("next" + questionNumber);
+    const qNum = questionIndex + 1;
+    const feedback = $(`#feedback${qNum}`);
+    const nextButton = $(`#next${qNum}`);
 
     alreadyAnswered[questionIndex] = true;
 
-    if (isCorrect === true) {
-      score = score + 1;
-      coins = coins + coinsPerCorrectAnswer;
-      coinsDisplay.textContent = coins;
-
-      coinsDisplay.classList.add("pop");
-      setTimeout(function () {
-        coinsDisplay.classList.remove("pop");
-      }, 500);
-
-      feedback.className = "demo__msg ok";
-      feedback.textContent = "Correct! +" + coinsPerCorrectAnswer + " coins. " + explanations[questionIndex];
+    if (isCorrect) {
+      score += 1;
+      coins += coinsPerCorrectAnswer;
+      if (coinsDisplay) {
+        coinsDisplay.textContent = coins;
+        coinsDisplay.classList.add("pop");
+        setTimeout(() => coinsDisplay.classList.remove("pop"), 500);
+      }
+      if (feedback) {
+        feedback.className = "demo__msg ok";
+        feedback.textContent = `Correct! +${coinsPerCorrectAnswer} coins. ${explanations[questionIndex]}`;
+      }
       confetti(window.innerWidth / 2, window.innerHeight / 2);
-    } else {
+    } else if (feedback) {
       feedback.className = "demo__msg no";
-      feedback.textContent = "Not quite. The correct answer is " + correctAnswerText[questionIndex] + ". " + explanations[questionIndex];
+      feedback.textContent = `Not quite. The correct answer is ${correctAnswerText[questionIndex]}. ${explanations[questionIndex]}`;
     }
 
-    feedback.hidden = false;
-    nextButton.hidden = false;
+    if (feedback) feedback.hidden = false;
+    if (nextButton) nextButton.hidden = false;
     updateProgressBar();
   }
 
   function checkMultipleChoice(clickedButton) {
-    if (alreadyAnswered[0] === true) return;
+    if (alreadyAnswered[0]) return;
+    const chosenLetter = clickedButton.getAttribute("data-letter");
+    const isCorrect = chosenLetter === "B";
 
-    var chosenLetter = clickedButton.getAttribute("data-letter");
-    var isCorrect = false;
+    clickedButton.classList.add(isCorrect ? "correct" : "wrong");
 
-    if (chosenLetter === "B") {
-      isCorrect = true;
-      clickedButton.classList.add("correct");
-    } else {
-      clickedButton.classList.add("wrong");
-    }
-
-    for (var i = 0; i < optionButtons.length; i++) {
-      optionButtons[i].disabled = true;
-      if (optionButtons[i].getAttribute("data-letter") === "B") {
-        optionButtons[i].classList.add("correct");
+    optionButtons.forEach((btn) => {
+      btn.disabled = true;
+      if (btn.getAttribute("data-letter") === "B") {
+        btn.classList.add("correct");
       }
-    }
+    });
 
     finishQuestion(0, isCorrect);
   }
 
   function checkTypedAnswer(questionIndex) {
-    var questionNumber = questionIndex + 1;
-    var input = document.getElementById("answer" + questionNumber);
-    var submitButton = document.getElementById("submit" + questionNumber);
-    var feedback = document.getElementById("feedback" + questionNumber);
+    if (alreadyAnswered[questionIndex]) return;
+    const qNum = questionIndex + 1;
+    const input = $(`#answer${qNum}`);
+    const submitButton = $(`#submit${qNum}`);
+    const feedback = $(`#feedback${qNum}`);
+    if (!input || !submitButton || !feedback) return;
 
-    if (alreadyAnswered[questionIndex] === true) return;
-
-    var userAnswer = input.value.trim().toLowerCase();
+    const userAnswer = input.value.trim().toLowerCase();
 
     if (userAnswer === "") {
       feedback.className = "demo__msg warn";
       feedback.textContent = "Please type an answer first.";
       feedback.hidden = false;
+      input.focus();
       return;
     }
 
-    var isCorrect = false;
-    if (questionIndex === 1) {
-      if (userAnswer === "100" || userAnswer === "one hundred") isCorrect = true;
-    } else if (questionIndex === 2) {
-      if (userAnswer === "nucleus" || userAnswer === "the nucleus") isCorrect = true;
-    } else if (questionIndex === 3) {
-      if (userAnswer === "plant") isCorrect = true;
+    let isCorrect = false;
+    if (questionIndex === 1 && (userAnswer === "100" || userAnswer === "one hundred")) {
+      isCorrect = true;
+    } else if (questionIndex === 2 && (userAnswer === "nucleus" || userAnswer === "the nucleus")) {
+      isCorrect = true;
     }
 
-    if (isCorrect === true) {
-      input.classList.add("correct");
-    } else {
-      input.classList.add("wrong");
-    }
+    input.classList.add(isCorrect ? "correct" : "wrong");
     input.disabled = true;
     submitButton.disabled = true;
 
@@ -350,7 +818,7 @@
 
   function goToNextQuestion() {
     if (currentQuestion < totalQuestions - 1) {
-      currentQuestion = currentQuestion + 1;
+      currentQuestion += 1;
       showQuestion();
     } else {
       showResults();
@@ -358,26 +826,27 @@
   }
 
   function showResults() {
-    for (var i = 0; i < questionBoxes.length; i++) {
-      questionBoxes[i].hidden = true;
+    questionBoxes.forEach((box) => (box.hidden = true));
+    if (resultsBox) resultsBox.hidden = false;
+    if (questionNumberText) questionNumberText.textContent = "Completed";
+    if (questionTypeText) questionTypeText.textContent = "Results";
+
+    const finalScoreEl = $("#finalScore");
+    const finalCoinsEl = $("#finalCoins");
+    const resultMsgEl = $("#resultMessage");
+
+    if (finalScoreEl) finalScoreEl.textContent = `${score} / ${totalQuestions}`;
+    if (finalCoinsEl) finalCoinsEl.textContent = coins;
+
+    if (resultMsgEl) {
+      if (score === totalQuestions) {
+        resultMsgEl.textContent = "A perfect score! You are ready for a group challenge.";
+      } else if (score >= 2) {
+        resultMsgEl.textContent = "Nice work! Try again to beat your score.";
+      } else {
+        resultMsgEl.textContent = "Good try! Give it another go to earn more coins.";
+      }
     }
-    resultsBox.hidden = false;
-
-    questionNumberText.textContent = "Completed";
-    questionTypeText.textContent = "Results";
-
-    document.getElementById("finalScore").textContent = score + " / " + totalQuestions;
-    document.getElementById("finalCoins").textContent = coins;
-
-    var message = "";
-    if (score === totalQuestions) {
-      message = "A perfect score. You are ready for a group challenge!";
-    } else if (score >= 2) {
-      message = "Nice work! Try again to beat your score.";
-    } else {
-      message = "Good try! Give it another go to earn more coins.";
-    }
-    document.getElementById("resultMessage").textContent = message;
 
     updateProgressBar();
     confetti(window.innerWidth / 2, window.innerHeight / 2);
@@ -387,229 +856,199 @@
     currentQuestion = 0;
     coins = 0;
     score = 0;
-    coinsDisplay.textContent = coins;
-    resultsBox.hidden = true;
+    if (coinsDisplay) coinsDisplay.textContent = "0";
+    if (resultsBox) resultsBox.hidden = true;
 
-    for (var i = 0; i < totalQuestions; i++) {
+    for (let i = 0; i < totalQuestions; i++) {
       alreadyAnswered[i] = false;
-      document.getElementById("feedback" + (i + 1)).hidden = true;
-      document.getElementById("next" + (i + 1)).hidden = true;
+      const fb = $(`#feedback${i + 1}`);
+      const nxt = $(`#next${i + 1}`);
+      if (fb) fb.hidden = true;
+      if (nxt) nxt.hidden = true;
     }
 
-    for (var j = 0; j < optionButtons.length; j++) {
-      optionButtons[j].disabled = false;
-      optionButtons[j].classList.remove("correct");
-      optionButtons[j].classList.remove("wrong");
+    optionButtons.forEach((btn) => {
+      btn.disabled = false;
+      btn.classList.remove("correct", "wrong");
+    });
+
+    for (let k = 2; k <= 3; k++) {
+      const input = $(`#answer${k}`);
+      const sub = $(`#submit${k}`);
+      if (input) {
+        input.value = "";
+        input.disabled = false;
+        input.classList.remove("correct", "wrong");
+      }
+      if (sub) sub.disabled = false;
     }
 
-    for (var k = 2; k <= 4; k++) {
-      var input = document.getElementById("answer" + k);
-      input.value = "";
-      input.disabled = false;
-      input.classList.remove("correct");
-      input.classList.remove("wrong");
-      document.getElementById("submit" + k).disabled = false;
-    }
-
+    resetScrambleState();
     showQuestion();
   }
 
-  for (var a = 0; a < optionButtons.length; a++) {
-    optionButtons[a].addEventListener("click", function () {
-      checkMultipleChoice(this);
-    });
-  }
+  optionButtons.forEach((btn) => {
+    btn.addEventListener("click", () => checkMultipleChoice(btn));
+  });
 
-  for (var b = 0; b < answerForms.length; b++) {
-    answerForms[b].addEventListener("submit", function (event) {
+  answerForms.forEach((f) => {
+    f.addEventListener("submit", (event) => {
       event.preventDefault();
-      var questionNumber = Number(this.getAttribute("data-question"));
-      checkTypedAnswer(questionNumber - 1);
+      const qNum = Number(f.getAttribute("data-question"));
+      checkTypedAnswer(qNum - 1);
     });
-  }
+  });
 
-  for (var c = 0; c < nextButtons.length; c++) {
-    nextButtons[c].addEventListener("click", goToNextQuestion);
-  }
+  nextButtons.forEach((btn) => btn.addEventListener("click", goToNextQuestion));
 
-  document.getElementById("restartButton").addEventListener("click", restartDemo);
+  const restartBtn = $("#restartButton");
+  if (restartBtn) restartBtn.addEventListener("click", restartDemo);
+
+  resetScrambleState();
   showQuestion();
 
-  /* ---------- Fully Functional Contact Form Handler ---------- */
+  /* ---------- 6. Contact Form Validation & Submission ---------- */
   const form = $("#contactForm");
   const ok = $("#formOk");
   const err = $("#formErr");
   const submitBtn = $("#submitBtn");
 
-  const rules = {
-    name: v => (v.trim().length >= 2 ? "" : "Please enter your full name."),
-    email: v => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? "" : "Please enter a valid email address."),
-    message_subject: v => (v.trim().length >= 3 ? "" : "Please enter a subject."),
-    message: v => (v.trim().length >= 10 ? "" : "Message should be at least 10 characters.")
-  };
+  if (form) {
+    const rules = {
+      name: (v) => (v.trim().length >= 2 ? "" : "Please enter your full name."),
+      email: (v) => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? "" : "Please enter a valid email address."),
+      message_subject: (v) => (v.trim().length >= 3 ? "" : "Please enter a subject."),
+      message: (v) => (v.trim().length >= 10 ? "" : "Message should be at least 10 characters.")
+    };
 
-  function validateField(name) {
-    const input = form.elements[name];
-    if (!input) return true;
-    const msg = rules[name](input.value);
-    input.closest(".field").classList.toggle("invalid", !!msg);
-    const errEl = $(`.error[data-for="${name}"]`, form);
-    if (errEl) errEl.textContent = msg;
-    return !msg;
-  }
-
-  Object.keys(rules).forEach(n => {
-    if (form.elements[n]) {
-      form.elements[n].addEventListener("input", () => validateField(n));
+    function validateField(name) {
+      const input = form.elements[name];
+      if (!input) return true;
+      const msg = rules[name](input.value);
+      const fieldWrapper = input.closest(".field");
+      if (fieldWrapper) fieldWrapper.classList.toggle("invalid", Boolean(msg));
+      const errEl = $(`.error[data-for="${name}"]`, form);
+      if (errEl) errEl.textContent = msg;
+      return !msg;
     }
-  });
 
-  form.addEventListener("submit", async e => {
-    e.preventDefault();
+    Object.keys(rules).forEach((n) => {
+      if (form.elements[n]) {
+        form.elements[n].addEventListener("input", () => validateField(n));
+      }
+    });
 
-    ok.hidden = true;
-    err.hidden = true;
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (ok) ok.hidden = true;
+      if (err) err.hidden = true;
 
-    const valid = Object.keys(rules).map(validateField).every(Boolean);
-    if (!valid) return;
+      const valid = Object.keys(rules).map(validateField).every(Boolean);
+      if (!valid) return;
 
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Sending message...";
-
-    try {
-      const formData = new FormData(form);
-      const response = await fetch(form.action, {
-        method: "POST",
-        body: formData,
-        headers: {
-          'Accept': 'application/json'
+      const apiKeyInput = form.querySelector('input[name="apikey"]');
+      if (apiKeyInput && apiKeyInput.value === "YOUR_ACCESS_KEY_HERE") {
+        const subj = encodeURIComponent(`[Quizian] ${form.elements.message_subject.value.trim()}`);
+        const body = encodeURIComponent(
+          `Name: ${form.elements.name.value.trim()}\nEmail: ${form.elements.email.value.trim()}\n\n${form.elements.message.value.trim()}`
+        );
+        window.location.href = `mailto:matteollanora@gmail.com?subject=${subj}&body=${body}`;
+        if (ok) {
+          ok.textContent = "✅ Opening your email client to send your message to matteollanora@gmail.com!";
+          ok.hidden = false;
         }
-      });
-
-      const result = await response.json();
-
-      if (response.status === 200) {
-        ok.hidden = false;
         form.reset();
         confetti(window.innerWidth / 2, window.innerHeight * 0.6);
-        setTimeout(() => (ok.hidden = true), 6000);
-      } else {
-        err.textContent = result.message || "❌ Oops! Something went wrong. Please try again.";
-        err.hidden = false;
+        return;
       }
-    } catch (error) {
-      err.textContent = "❌ Network error. Please check your connection and try again.";
-      err.hidden = false;
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = "Send Message";
-    }
-  });
 
-  /* ================= PROMOTIONAL VIDEO CONTROLS ================= */
-  const video = $("#promoVideo");
-  const playPauseBtn = $("#playPauseBtn");
-  const muteBtn = $("#muteBtn");
-  const fullscreenBtn = $("#fullscreenBtn");
-  const replayBtn = $("#replayBtn");
-  const videoProgressContainer = $("#videoProgressContainer");
-  const videoProgressFilled = $("#videoProgressFilled");
-  const videoTimeDisplay = $("#videoTimeDisplay");
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Sending message...";
+      }
 
-  if (video) {
-    function formatTime(seconds) {
-      const m = Math.floor(seconds / 60);
-      const s = Math.floor(seconds % 60);
-      return `${m}:${s < 10 ? "0" : ""}${s}`;
-    }
+      try {
+        const formData = new FormData(form);
+        const response = await fetch(form.action, {
+          method: "POST",
+          body: formData,
+          headers: { Accept: "application/json" }
+        });
 
-    video.addEventListener("loadedmetadata", () => {
-      if (videoTimeDisplay) {
-        videoTimeDisplay.textContent = `0:00 / ${formatTime(video.duration)}`;
+        const result = await response.json();
+
+        if (response.ok) {
+          if (ok) {
+            ok.textContent = "✅ Thank you! Your message has been sent successfully.";
+            ok.hidden = false;
+          }
+          form.reset();
+          confetti(window.innerWidth / 2, window.innerHeight * 0.6);
+          setTimeout(() => {
+            if (ok) ok.hidden = true;
+          }, 6000);
+        } else if (err) {
+          err.textContent = result.message || "❌ Oops! Something went wrong. Please try again.";
+          err.hidden = false;
+        }
+      } catch (error) {
+        if (err) {
+          err.textContent = "❌ Network error. Please check your connection and try again.";
+          err.hidden = false;
+        }
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Send Message";
+        }
       }
     });
-
-    if (playPauseBtn) {
-      playPauseBtn.addEventListener("click", () => {
-        if (video.paused) {
-          video.play();
-          playPauseBtn.textContent = "⏸";
-        } else {
-          video.pause();
-          playPauseBtn.textContent = "▶";
-        }
-      });
-    }
-
-    video.addEventListener("play", () => { if (playPauseBtn) playPauseBtn.textContent = "⏸"; });
-    video.addEventListener("pause", () => { if (playPauseBtn) playPauseBtn.textContent = "▶"; });
-
-    if (muteBtn) {
-      muteBtn.addEventListener("click", () => {
-        video.muted = !video.muted;
-        muteBtn.textContent = video.muted ? "🔇" : "🔊";
-      });
-    }
-
-    if (fullscreenBtn) {
-      fullscreenBtn.addEventListener("click", () => {
-        if (video.requestFullscreen) {
-          video.requestFullscreen();
-        } else if (video.webkitRequestFullscreen) {
-          video.webkitRequestFullscreen();
-        }
-      });
-    }
-
-    if (replayBtn) {
-      replayBtn.addEventListener("click", () => {
-        video.currentTime = 0;
-        video.play();
-        if (playPauseBtn) playPauseBtn.textContent = "⏸";
-      });
-    }
-
-    video.addEventListener("timeupdate", () => {
-      const current = video.currentTime;
-      const duration = video.duration || 1;
-      const percent = (current / duration) * 100;
-      if (videoProgressFilled) videoProgressFilled.style.width = percent + "%";
-      if (videoTimeDisplay) {
-        videoTimeDisplay.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
-      }
-    });
-
-    if (videoProgressContainer) {
-      videoProgressContainer.addEventListener("click", (e) => {
-        const rect = videoProgressContainer.getBoundingClientRect();
-        const pos = (e.clientX - rect.left) / rect.width;
-        video.currentTime = pos * video.duration;
-      });
-    }
   }
 
-  /* ================= VIBE LAYER ================= */
+  /* ---------- 7. Unified Scroll Handler, Cursor Glow, Tilt & Confetti ---------- */
   const bar = $("#progress");
-  window.addEventListener("scroll", () => {
-    const h = document.documentElement;
-    bar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100 + "%";
-  });
+  let scrollTicking = false;
+
+  function onScroll() {
+    if (scrollTicking) return;
+    scrollTicking = true;
+    requestAnimationFrame(() => {
+      if (nav) nav.classList.toggle("scrolled", window.scrollY > 30);
+      if (bar) {
+        const h = document.documentElement;
+        const maxScroll = h.scrollHeight - h.clientHeight;
+        bar.style.width = maxScroll > 0 ? `${(h.scrollTop / maxScroll) * 100}%` : "0%";
+      }
+      updateActiveNavOnScroll();
+      scrollTicking = false;
+    });
+  }
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  updateActiveNavOnScroll();
 
   const glow = $("#cursorGlow");
-  window.addEventListener("pointermove", e => {
-    glow.style.opacity = 1;
-    glow.style.left = e.clientX + "px";
-    glow.style.top = e.clientY + "px";
-  });
+  if (glow) {
+    window.addEventListener(
+      "pointermove",
+      (e) => {
+        if (e.pointerType === "touch") return;
+        glow.style.opacity = "1";
+        glow.style.left = `${e.clientX}px`;
+        glow.style.top = `${e.clientY}px`;
+      },
+      { passive: true }
+    );
+  }
 
-  $$(".card, .feature, .member, .step").forEach(el => {
-    el.addEventListener("pointermove", e => {
+  $$(".card, .feature, .member, .step").forEach((el) => {
+    el.addEventListener("pointermove", (e) => {
       if (e.pointerType === "touch") return;
       const r = el.getBoundingClientRect();
       const x = (e.clientX - r.left) / r.width - 0.5;
       const y = (e.clientY - r.top) / r.height - 0.5;
-      el.style.setProperty("--ry", x * 10 + "deg");
-      el.style.setProperty("--rx", -y * 10 + "deg");
+      el.style.setProperty("--ry", `${x * 8}deg`);
+      el.style.setProperty("--rx", `${-y * 8}deg`);
     });
     el.addEventListener("pointerleave", () => {
       el.style.setProperty("--rx", "0deg");
@@ -618,50 +1057,66 @@
   });
 
   const cv = $("#confetti");
-  const ctx = cv.getContext("2d");
-  let bits = [], raf = null;
+  const ctx = cv ? cv.getContext("2d") : null;
+  let bits = [];
+  let raf = null;
   const colors = ["#ff8133", "#ffd9bf", "#34c759", "#ffffff", "#ffb27a"];
 
-  function resize() { cv.width = innerWidth; cv.height = innerHeight; }
-  resize();
-  addEventListener("resize", resize);
+  function resizeCanvas() {
+    if (!cv) return;
+    cv.width = window.innerWidth;
+    cv.height = window.innerHeight;
+  }
 
-  function confetti(x = innerWidth / 2, y = innerHeight / 2) {
-    for (let i = 0; i < 90; i++) {
+  if (cv && ctx) {
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+  }
+
+  function confetti(x = window.innerWidth / 2, y = window.innerHeight / 2) {
+    if (!cv || !ctx) return;
+    for (let i = 0; i < 80; i++) {
       bits.push({
-        x, y,
+        x,
+        y,
         vx: (Math.random() - 0.5) * 14,
         vy: Math.random() * -13 - 3,
         s: Math.random() * 8 + 4,
         r: Math.random() * 6,
         vr: (Math.random() - 0.5) * 0.4,
         c: colors[(Math.random() * colors.length) | 0],
-        life: 110
+        life: 105
       });
     }
-    if (!raf) loop();
+    if (!raf) loopConfetti();
   }
 
-  function loop() {
+  function loopConfetti() {
+    if (!cv || !ctx) return;
     ctx.clearRect(0, 0, cv.width, cv.height);
-    bits.forEach(b => {
-      b.vy += 0.38; b.x += b.vx; b.y += b.vy; b.r += b.vr; b.life--;
+    bits.forEach((b) => {
+      b.vy += 0.38;
+      b.x += b.vx;
+      b.y += b.vy;
+      b.r += b.vr;
+      b.life -= 1;
       ctx.save();
       ctx.translate(b.x, b.y);
       ctx.rotate(b.r);
-      ctx.globalAlpha = Math.max(0, b.life / 110);
+      ctx.globalAlpha = Math.max(0, b.life / 105);
       ctx.fillStyle = b.c;
       ctx.fillRect(-b.s / 2, -b.s / 2, b.s, b.s * 0.6);
       ctx.restore();
     });
-    bits = bits.filter(b => b.life > 0);
-    raf = bits.length ? requestAnimationFrame(loop) : null;
+    bits = bits.filter((b) => b.life > 0);
+    raf = bits.length ? requestAnimationFrame(loopConfetti) : null;
     if (!raf) ctx.clearRect(0, 0, cv.width, cv.height);
   }
 
-  $$(".cta__btns .btn, .hero__cta .btn--primary").forEach(b =>
-    b.addEventListener("click", e => confetti(e.clientX, e.clientY))
+  $$(".cta__btns .btn, .hero__cta .btn--primary").forEach((b) =>
+    b.addEventListener("click", (e) => confetti(e.clientX, e.clientY))
   );
 
-  $("#year").textContent = new Date().getFullYear();
+  const yearEl = $("#year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
 })();
