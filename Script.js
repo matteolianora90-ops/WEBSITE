@@ -286,17 +286,9 @@
     startAutoRotate();
   }
 
-  /* ---------- 4. Promotional Video Player (Viewport & Tab Visibility Controlled) ---------- */
+  /* ---------- 4. Promotional Video Player (Native Controls + Viewport & Tab Visibility) ---------- */
   const video = $("#promoVideo");
   const bigPlayBtn = $("#bigPlayBtn");
-  const playPauseBtn = $("#playPauseBtn");
-  const muteBtn = $("#muteBtn");
-  const volumeSlider = $("#volumeSlider");
-  const fullscreenBtn = $("#fullscreenBtn");
-  const replayBtn = $("#replayBtn");
-  const videoProgressContainer = $("#videoProgressContainer");
-  const videoProgressFilled = $("#videoProgressFilled");
-  const videoTimeDisplay = $("#videoTimeDisplay");
   const videoContainer = $("#videoContainer");
 
   if (video) {
@@ -304,34 +296,14 @@
     let isVideoVisible = false;
     let isSystemPausing = false;
     let hasStartedOnce = false;
-    let lastNonZeroVolume = 0.85;
 
     // Start muted to satisfy browser autoplay rules
     video.muted = true;
     video.defaultMuted = true;
 
-    function formatTime(seconds) {
-      if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
-      const m = Math.floor(seconds / 60);
-      const s = Math.floor(seconds % 60);
-      return `${m}:${s < 10 ? "0" : ""}${s}`;
-    }
-
     function syncPlayState() {
       const isPaused = video.paused || video.ended;
-      if (playPauseBtn) playPauseBtn.textContent = isPaused ? "▶" : "⏸";
       if (bigPlayBtn) bigPlayBtn.classList.toggle("is-hidden", !isPaused);
-    }
-
-    function syncAudioState() {
-      const effectiveMuted = video.muted || video.volume === 0;
-      if (muteBtn) {
-        muteBtn.textContent = effectiveMuted ? "🔇" : "🔊";
-        muteBtn.setAttribute("aria-label", effectiveMuted ? "Unmute video" : "Mute video");
-      }
-      if (volumeSlider) {
-        volumeSlider.value = effectiveMuted ? "0" : String(video.volume);
-      }
     }
 
     function pauseForVisibilityChange() {
@@ -346,8 +318,8 @@
       if (!video.paused) return;
 
       // Only enforce muted state on the very first automatic start;
-      // preserve user's unmute choice if autoplay succeeds afterward,
-      // falling back to muted if the browser rejects unmuted resume.
+      // preserve user's unmute choice afterward, falling back to muted
+      // if the browser rejects unmuted resume.
       if (!hasStartedOnce) {
         video.muted = true;
       }
@@ -358,13 +330,10 @@
           .then(() => {
             hasStartedOnce = true;
             syncPlayState();
-            syncAudioState();
           })
           .catch(() => {
-            // If browser blocks unmuted resume, retry muted so video still resumes smoothly
             if (!video.muted) {
               video.muted = true;
-              syncAudioState();
               video.play()
                 .then(() => {
                   hasStartedOnce = true;
@@ -377,20 +346,6 @@
               syncPlayState();
             }
           });
-      }
-    }
-
-    function toggleVideoPlayback() {
-      if (video.paused || video.ended) {
-        userPaused = false;
-        video.play()
-          .then(() => {
-            hasStartedOnce = true;
-          })
-          .catch(() => {});
-      } else {
-        userPaused = true;
-        video.pause();
       }
     }
 
@@ -413,18 +368,12 @@
     );
     videoVisibilityObserver.observe(observeTarget);
 
-    // Pause when tab/window becomes hidden; resume when active only if visible & not manually paused
+    // Pause when tab/window becomes hidden; resume only if visible & not manually paused
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
         pauseForVisibilityChange();
       } else if (isVideoVisible && !userPaused) {
         playWhenVisible();
-      }
-    });
-
-    video.addEventListener("loadedmetadata", () => {
-      if (videoTimeDisplay) {
-        videoTimeDisplay.textContent = `0:00 / ${formatTime(video.duration)}`;
       }
     });
 
@@ -440,14 +389,7 @@
       });
     }
 
-    if (playPauseBtn) {
-      playPauseBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        toggleVideoPlayback();
-      });
-    }
-
-    // Sync state when played/paused via either custom buttons or native HTML5 video controls
+    // Keep state in sync with the native HTML5 video controls
     video.addEventListener("play", () => {
       isSystemPausing = false;
       userPaused = false;
@@ -462,7 +404,7 @@
 
     video.addEventListener("pause", () => {
       if (isSystemPausing) {
-        // Automatic pause due to scrolling offscreen or tab switch: keep userPaused false
+        // Automatic pause due to scrolling offscreen or tab switch
         isSystemPausing = false;
       } else if (!video.ended) {
         // Intentional manual pause by the user
@@ -476,87 +418,7 @@
       syncPlayState();
     });
 
-    video.addEventListener("volumechange", syncAudioState);
-
-    if (muteBtn) {
-      muteBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        if (video.muted || video.volume === 0) {
-          video.muted = false;
-          video.volume = lastNonZeroVolume > 0 ? lastNonZeroVolume : 0.85;
-        } else {
-          lastNonZeroVolume = video.volume;
-          video.muted = true;
-        }
-        syncAudioState();
-      });
-    }
-
-    if (volumeSlider) {
-      volumeSlider.addEventListener("input", (e) => {
-        const val = Number(e.target.value);
-        video.volume = val;
-        if (val > 0) {
-          lastNonZeroVolume = val;
-          video.muted = false;
-        } else {
-          video.muted = true;
-        }
-        syncAudioState();
-      });
-    }
-
-    if (fullscreenBtn) {
-      fullscreenBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const target = videoContainer || video;
-        if (document.fullscreenElement) {
-          document.exitFullscreen().catch(() => {});
-        } else if (target.requestFullscreen) {
-          target.requestFullscreen().catch(() => {});
-        } else if (video.webkitEnterFullscreen) {
-          video.webkitEnterFullscreen();
-        }
-      });
-    }
-
-    if (replayBtn) {
-      replayBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        userPaused = false;
-        video.currentTime = 0;
-        video.play()
-          .then(() => {
-            hasStartedOnce = true;
-          })
-          .catch(() => {});
-      });
-    }
-
-    video.addEventListener("timeupdate", () => {
-      const current = video.currentTime;
-      const duration = Number.isFinite(video.duration) && video.duration > 0 ? video.duration : 60;
-      const percent = Math.min(100, (current / duration) * 100);
-      if (videoProgressFilled) videoProgressFilled.style.width = `${percent}%`;
-      if (videoProgressContainer) {
-        videoProgressContainer.setAttribute("aria-valuenow", String(Math.round(percent)));
-      }
-      if (videoTimeDisplay) {
-        videoTimeDisplay.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
-      }
-    });
-
-    if (videoProgressContainer) {
-      videoProgressContainer.addEventListener("click", (e) => {
-        if (!Number.isFinite(video.duration) || video.duration <= 0) return;
-        const rect = videoProgressContainer.getBoundingClientRect();
-        const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-        video.currentTime = pos * video.duration;
-      });
-    }
-
     syncPlayState();
-    syncAudioState();
   }
 
   /* ---------- 5. Quick Play Demo (Including Clickable Scrambled Words) ---------- */
