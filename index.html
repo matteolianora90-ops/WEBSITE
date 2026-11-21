@@ -216,16 +216,23 @@
           <div class="video-stage" id="videoStage">
             <video
               id="promoVideo"
-              src="Quizian_Promo_60s_v5.mp4"
               poster="First1.jfif"
               preload="metadata"
               muted
               playsinline
               controls
-            ></video>
+            >
+              <source src="Quizian_Promo_60s_v5.mp4" type="video/mp4" />
+              Your browser does not support HTML5 video.
+              <a href="Quizian_Promo_60s_v5.mp4">Download the video</a>.
+            </video>
             <button type="button" class="video-big-play" id="bigPlayBtn" aria-label="Play promotional video">
               <span class="video-big-play__icon">▶</span>
             </button>
+            <p class="video-error" id="videoError" role="alert" hidden>
+              ⚠️ The video could not be loaded.
+              <a href="Quizian_Promo_60s_v5.mp4" target="_blank" rel="noopener">Open it directly</a>.
+            </p>
           </div>
         </div>
       </div>
