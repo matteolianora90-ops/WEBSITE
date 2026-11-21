@@ -204,18 +204,30 @@
     );
     carouselVisObs.observe(scene);
 
+    // Pointer capture is only taken once the user actually drags.
+    // Capturing on pointerdown would redirect the "click" to the scene,
+    // so the slide cards could never be clicked.
+    let activePointerId = null;
+
     scene.addEventListener("pointerdown", (e) => {
       isDragging = true;
       dragMoved = false;
+      activePointerId = e.pointerId;
       startX = e.clientX;
       lastX = startX;
-      scene.setPointerCapture(e.pointerId);
     });
 
     scene.addEventListener("pointermove", (e) => {
       if (!isDragging) return;
       const deltaX = e.clientX - lastX;
-      if (Math.abs(e.clientX - startX) > 6) dragMoved = true;
+      if (!dragMoved && Math.abs(e.clientX - startX) > 6) {
+        dragMoved = true;
+        try {
+          scene.setPointerCapture(activePointerId);
+        } catch (error) {
+          /* pointer capture is optional */
+        }
+      }
       lastX = e.clientX;
       targetAngle += deltaX * 0.35;
     });
@@ -227,8 +239,9 @@
       startAutoRotate();
     }
 
-    scene.addEventListener("pointerup", endDrag);
-    scene.addEventListener("pointercancel", endDrag);
+    // Listen on window so the drag always ends, even if the pointer is released outside the scene
+    window.addEventListener("pointerup", endDrag);
+    window.addEventListener("pointercancel", endDrag);
 
     items.forEach((item, idx) => {
       item.addEventListener("click", () => {
@@ -290,6 +303,7 @@
   const video = $("#promoVideo");
   const bigPlayBtn = $("#bigPlayBtn");
   const videoContainer = $("#videoContainer");
+  const videoError = $("#videoError");
 
   if (video) {
     let userPaused = false;
@@ -301,9 +315,25 @@
     video.muted = true;
     video.defaultMuted = true;
 
+    function isFullscreen() {
+      return Boolean(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        video.webkitDisplayingFullscreen
+      );
+    }
+
+    // The big play button only shows before the first play and after the video ends,
+    // so it never covers the native controls while the video is in use.
     function syncPlayState() {
-      const isPaused = video.paused || video.ended;
-      if (bigPlayBtn) bigPlayBtn.classList.toggle("is-hidden", !isPaused);
+      if (bigPlayBtn) {
+        bigPlayBtn.classList.toggle("is-hidden", hasStartedOnce && !video.ended);
+      }
+    }
+
+    function showVideoError() {
+      if (videoError) videoError.hidden = false;
+      if (bigPlayBtn) bigPlayBtn.hidden = true;
     }
 
     function pauseForVisibilityChange() {
@@ -317,44 +347,34 @@
       if (userPaused || document.hidden || !isVideoVisible || video.ended) return;
       if (!video.paused) return;
 
-      // Only enforce muted state on the very first automatic start;
-      // preserve user's unmute choice afterward, falling back to muted
-      // if the browser rejects unmuted resume.
-      if (!hasStartedOnce) {
-        video.muted = true;
-      }
-
       const playPromise = video.play();
       if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            hasStartedOnce = true;
-            syncPlayState();
-          })
-          .catch(() => {
-            if (!video.muted) {
-              video.muted = true;
-              video.play()
-                .then(() => {
-                  hasStartedOnce = true;
-                  syncPlayState();
-                })
-                .catch(() => {
-                  syncPlayState();
-                });
-            } else {
-              syncPlayState();
-            }
-          });
+        playPromise.catch(() => {
+          // Autoplay blocked: the big play button stays so the visitor can start it manually
+          syncPlayState();
+        });
       }
     }
 
-    // Observe the video container so playback strictly matches viewport visibility
+    // Visitor clicked the big play button (a user gesture, so sound is allowed)
+    function playFromButton() {
+      userPaused = false;
+      video.muted = false;
+      video.play().catch(() => {
+        // Some browsers refuse unmuted playback: try again muted
+        video.muted = true;
+        video.play().catch(() => {});
+      });
+    }
+
+    // Play when at least 45% of the video is on screen, pause when it leaves
     const observeTarget = videoContainer || video;
     const videoVisibilityObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           isVideoVisible = entry.isIntersecting && entry.intersectionRatio >= 0.45;
+          // Fullscreen (especially on iOS) can hide the page behind it: never pause for that
+          if (isFullscreen()) return;
           if (isVideoVisible) {
             playWhenVisible();
           } else {
@@ -362,13 +382,11 @@
           }
         });
       },
-      {
-        threshold: [0, 0.25, 0.45, 0.75]
-      }
+      { threshold: [0, 0.25, 0.45, 0.75] }
     );
     videoVisibilityObserver.observe(observeTarget);
 
-    // Pause when tab/window becomes hidden; resume only if visible & not manually paused
+    // Pause when the tab is hidden; resume only if visible and not paused by the visitor
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
         pauseForVisibilityChange();
@@ -377,46 +395,46 @@
       }
     });
 
+    // When leaving fullscreen, apply the real visibility state again
+    document.addEventListener("fullscreenchange", () => {
+      if (!isFullscreen() && !isVideoVisible) pauseForVisibilityChange();
+    });
+
     if (bigPlayBtn) {
       bigPlayBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        userPaused = false;
-        video.play()
-          .then(() => {
-            hasStartedOnce = true;
-          })
-          .catch(() => {});
+        playFromButton();
       });
     }
 
     // Keep state in sync with the native HTML5 video controls
-    video.addEventListener("play", () => {
+    video.addEventListener("playing", () => {
+      hasStartedOnce = true;
       isSystemPausing = false;
       userPaused = false;
-      hasStartedOnce = true;
-      // Guard against edge-case manual play while scrolled out of view
-      if (!isVideoVisible || document.hidden) {
-        pauseForVisibilityChange();
-        return;
-      }
       syncPlayState();
     });
 
     video.addEventListener("pause", () => {
       if (isSystemPausing) {
-        // Automatic pause due to scrolling offscreen or tab switch
+        // Automatic pause (scrolled away or tab switched)
         isSystemPausing = false;
       } else if (!video.ended) {
-        // Intentional manual pause by the user
+        // The visitor paused it on purpose
         userPaused = true;
       }
       syncPlayState();
     });
 
-    video.addEventListener("ended", () => {
-      userPaused = true;
-      syncPlayState();
-    });
+    video.addEventListener("ended", syncPlayState);
+
+    // If the video was scrolled into view before it was ready, start it once it can play
+    video.addEventListener("canplay", playWhenVisible);
+
+    // Missing file, wrong name/case, or unsupported format: tell the visitor instead of failing silently
+    const sourceEl = video.querySelector("source");
+    if (sourceEl) sourceEl.addEventListener("error", showVideoError);
+    video.addEventListener("error", showVideoError);
 
     syncPlayState();
   }
